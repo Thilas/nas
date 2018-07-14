@@ -1,0 +1,6 @@
+# Ignore everything in root directory
+/*
+
+# Ignore configuration files in media directory
+/media/*.env
+/media/*.yml

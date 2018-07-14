@@ -1,0 +1,16 @@
+#!/bin/sh
+
+_home="$1"
+_user="$2"
+
+# Reset home default permissions
+synoacltool -copy "$_home/.." "$_home"
+synoacltool -del "$_home"
+synoacltool -add "$_home" 'user:root:allow:rwxpdDaARWcCo:---n'
+synoacltool -add "$_home" "user:$_user:allow:rwxpdDaARWcCo:fd--"
+
+# Set right permissions in order to allow SSH keys authentication if any
+if [[ -d "$_home/.ssh" ]]; then
+	chmod 700 "$_home" "$_home/.ssh"
+	find "$_home/.ssh" -type f -exec chmod 600 "{}" \;
+fi

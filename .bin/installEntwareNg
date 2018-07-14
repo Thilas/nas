@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# https://github.com/Entware/Entware-ng/wiki/Install-on-Synology-NAS
+
+_hardware="$(uname -m)"
+case "$_hardware" in
+#'???')
+#	_url='http://pkg.entware.net/binaries/armv5/installer/entware_install.sh'
+#	;;
+'armv7l')
+	_url='http://pkg.entware.net/binaries/armv7/installer/entware_install.sh'
+	;;
+#'???')
+#	_url='http://pkg.entware.net/binaries/x86-32/installer/entware_install.sh'
+#	;;
+'x86_64')
+	_url='http://pkg.entware.net/binaries/x86-64/installer/entware_install.sh'
+	;;
+#'???')
+#	_url='http://pkg.entware.net/binaries/mipsel/installer/installer.sh'
+#	;;
+*)
+	>&2 echo "Unknown hardware: $_hardware"
+	exit 1
+	;;
+esac
+
+wget -O - "$_url" | /bin/sh

@@ -1,0 +1,13 @@
+--- /etc/ssh/sshd_config
++++ /etc/ssh/sshd_config
+@@ -43,3 +43,4 @@
+ #LoginGraceTime 2m
+-#PermitRootLogin yes
++PermitRootLogin no
++DenyUsers admin
+ #StrictModes yes
+@@ -99,3 +100,3 @@
+ #AllowAgentForwarding yes
+-AllowTcpForwarding no
++AllowTcpForwarding yes
+ #GatewayPorts no

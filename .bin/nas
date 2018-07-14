@@ -1,0 +1,80 @@
+#!/bin/sh
+
+mkdir -p "$HOME/.log"
+_logFile="$HOME/.log/nas.log"
+
+function execute # (message, command)
+{
+	local message="$1" command="$2"
+	echo -n "$message... "
+	echo "*** $message..." >> "$_logFile"
+	errorMessage="$(eval "sudo $command 2>&1" | tee -a "$_logFile" ; ( exit ${PIPESTATUS[0]} ))"
+	if [[ $? -eq 0 ]]; then
+		echo 'done' | tee -a "$_logFile"
+		return 0
+	else
+		echo 'failed' | tee -a "$_logFile"
+		echo
+		echo "$errorMessage"
+		exit 1
+	fi
+}
+
+function patch # (file, patch)
+{
+	local file="$1" patch="$HOME/.config/$2"
+	echo -n "Patching file $file... "
+	echo "*** Patching file $file..." >> "$_logFile"
+	errorMessage="$(eval "sudo patch -N --dry-run \"$file\" < \"$patch\" 2>&1" | tee -a "$_logFile" ; ( exit ${PIPESTATUS[0]} ))"
+	if [[ $? -eq 0 ]]; then
+		eval "sudo patch -N \"$file\" < \"$patch\" 2>&1" >> "$_logFile"
+		echo "done" | tee -a "$_logFile"
+		return 0
+	else
+		if [[ -n "$(echo "$errorMessage" | grep 'Skipping patch.')" ]]; then
+			echo "skipped" | tee -a "$_logFile"
+			return 1
+		fi
+		echo 'failed' | tee -a "$_logFile"
+		echo
+		echo "$errorMessage"
+		exit 2
+	fi
+}
+
+function processEntwareNg # ()
+{
+	# https://github.com/Entware/Entware-ng/wiki/Install-on-Synology-NAS
+	sudo mkdir -p /volume1/@entware-ng/opt
+	sudo mkdir -p /opt
+	grep -qs ' /opt ' /proc/mounts || sudo mount -o bind /volume1/@entware-ng/opt /opt
+
+	if [[ -z "$(ls -A /volume1/@entware-ng/opt)" ]]; then
+		execute 'Installing Entware-ng' 'installEntwareNg'
+		sudo cp "$HOME/.bin/entware-startup.sh" /usr/local/etc/rc.d/
+		echo '*** Please reboot the nas ***' | tee -a "$_logFile"
+		exit
+	fi
+
+	. /opt/etc/profile
+	execute 'Updating Entware-ng' 'opkg update'
+	execute 'Upgrading Entware-ng' 'opkg upgrade'
+
+	sudo opkg install patch >> "$_logFile"
+}
+
+sudo true
+
+echo "*** $(date) Start ***" > "$_logFile"
+echo >> "$_logFile"
+
+function end {
+	echo >> "$_logFile"
+	echo "*** $(date) End ***" >> "$_logFile"
+}
+trap end EXIT
+
+processEntwareNg
+execute 'Fixing permissions' "fixPermissions \"$HOME\" \"$USER\""
+patch /etc/ssh/sshd_config sshd_config.patch && echo '*** Please reboot the nas ***' | tee -a "$_logFile"
+execute 'Upgrading docker containers' "\"$HOME/media/upgrade\""
