@@ -60,7 +60,7 @@ function processEntwareNg # ()
 	execute 'Updating Entware-ng' 'opkg update'
 	execute 'Upgrading Entware-ng' 'opkg upgrade'
 
-	sudo opkg install patch >> "$_logFile"
+	sudo opkg install less patch >> "$_logFile"
 }
 
 sudo true
