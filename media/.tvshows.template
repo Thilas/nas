@@ -1,0 +1,15 @@
+# SSH server & user to download tv shows from (e.g. 'user@server')
+# SSH key required for the specified user
+SERVER=''
+# Path to tv shows on remote server
+SOURCE='/path/to/tvshows'
+# Path to downloaded tv shows on current server
+DESTINATION='/volume1/media/downloads/tvshows'
+# Pipe-separated & regex-escaped list of TV shows to downloads (e.g. 'Doctor Who \(2005\)|Game of Thrones')
+WANTED=''
+
+# Medusa settings
+MEDUSA_HOST='localhost'
+MEDUSA_PORT='8081'
+MEDUSA_TOKEN=''
+MEDUSA_DOWNLOADS='/downloads'

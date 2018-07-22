@@ -7,8 +7,6 @@ if [[ ! -f docker-compose.yml ]]; then
 	exit 1
 fi
 
-#sudo docker-compose down
-#echo
 sudo docker-compose pull
 echo
 sudo docker-compose up -d

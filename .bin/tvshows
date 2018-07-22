@@ -1,0 +1,75 @@
+#!/bin/sh
+
+CACHE="$HOME/.cache/tvshows"
+EXTENSIONS='\.(mkv|avi|divx|xvid|mov|wmv|mp4|mpg|mpeg|vob|iso|m4v|ts)'
+DEBUGTVSHOWS=10
+
+[[ "$1" = '--test' ]] && TEST=1
+
+function echoTitle {
+	echo -e "\e[35m$1\e[39m" "${@:2}"
+}
+
+# Load & check tv shows configuration
+[[ -f "$HOME/.tvshows" ]] || cp "$HOME/media/.tvshows.template" "$HOME/.tvshows"
+. "$HOME/.tvshows"
+if [[ -z "$SERVER" ]] || [[ -z "$SOURCE" ]] || [[ -z "$DESTINATION" ]] || [[ -z "$TVSHOWS" ]]; then
+	>&2 echo '~/.tvshows is not properly configured: rsync.'
+	exit 1
+fi
+ssh -o PasswordAuthentication=no "$SERVER" "true"
+if [[ $? -ne 0 ]]; then
+	>&2 echo 'SERVER defined in ~/.tvshows is invalid.'
+	exit 2
+fi
+if ssh "$SERVER" "[[ ! -d \"$SOURCE\" ]]"; then
+	>&2 echo 'SOURCE defined in ~/.tvshows does not exist.'
+	exit 3
+fi
+if [[ ! -d "$DESTINATION" ]]; then
+	>&2 echo 'DESTINATION defined in ~/.tvshows does not exist.'
+	exit 4
+fi
+if [[ -z "$MEDUSA_HOST" ]] || [[ -z "$MEDUSA_PORT" ]] || [[ -z "$MEDUSA_TOKEN" ]] || [[ -z "$MEDUSA_DOWNLOADS" ]]; then
+	>&2 echo '~/.tvshows is not properly configured: medusa.'
+	exit 5
+fi
+
+# Display latest available tv shows
+if [[ $DEBUGTVSHOWS -gt 0 ]]; then
+	echoTitle 'Latest available tv shows:'
+	ssh "$SERVER" "find \"$SOURCE\" -type f -printf '%T+ %P\\n' | sort -n | egrep -i \"^[^ ]+ ($TVSHOWS)/.+$EXTENSIONS$\" | tail -$DEBUGTVSHOWS" && echo
+fi
+
+# Load latest downloaded tv show
+if [[ ! -f "$CACHE" ]]; then
+	LATEST="$(ssh "$SERVER" "find \"$SOURCE\" -type f -printf '%T@ %P\\n' | sort -n | egrep -i \"^[^ ]+ ($TVSHOWS)/.+$EXTENSIONS$\" | tail -1 | cut -f2- -d' '")"
+	echo "$LATEST" > "$CACHE"
+	echo 'First run, nothing will be downloaded.'
+	echoTitle 'Latest tv show:' "$LATEST"
+	exit
+fi
+LATEST="$(cat "$CACHE")"
+echoTitle 'Latest downloaded tv show:' "$LATEST"
+
+# Downloads any new tv shows
+echo && echoTitle 'Downloading new tv shows...'
+[[ $TEST -eq 1 ]] && RSYNCARG='-n'
+ssh "$SERVER" "find \"$SOURCE\" -type f -newer \"$SOURCE/$LATEST\" -printf '%P\\n' | egrep \"^($TVSHOWS)/.+$EXTENSIONS$\"" \
+	| rsync -hrtv $RSYNCARG -e ssh --files-from=- --stats --progress "$SERVER:$SOURCE/" "$DESTINATION/"
+
+# Save new latest downloaded tv show if any
+LATEST="$(find "$DESTINATION" -type f -printf '%T@ %P\n' | sort -n | tail -1 | cut -f2- -d' ')"
+if [[ -n "$LATEST" ]]; then
+	echo "$LATEST" > "$CACHE"
+	echo && echoTitle 'New latest downloaded tv show:' "$LATEST"
+fi
+
+# Set permissions of downloaded tv shows
+[[ $TEST -ne 1 ]] && echo && echoTitle 'Setting permissions of downloaded tv shows...' && sudo find "$DESTINATION" -exec synoacltool -enforce-inherit "{}" \;
+
+# Trigger Medusa post-processing
+echo && echoTitle 'Triggering Medusa post-processing...'
+ENCODED_PATH="$(python -c "import urllib;print urllib.quote(raw_input())" <<< "$MEDUSA_DOWNLOADS")"
+RESPONSE="$(curl -sS "http://$MEDUSA_HOST:$MEDUSA_PORT/api/v1/$MEDUSA_TOKEN/?cmd=postprocess&type=manual&path=$ENCODED_PATH&process_method=move&force_replace=0&is_priority=0&delete_files=1&return_data=1")"
+python -c "import json;print json.loads(raw_input())['data']" <<< "$RESPONSE"
