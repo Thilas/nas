@@ -1,49 +1,55 @@
 #!/bin/sh
 
-mkdir -p "$HOME/.log"
-_logFile="$HOME/.log/nas.log"
+LOG="$HOME/.log/nas.log"
 
-function execute # (message, command)
-{
+mkdir -p "$HOME/.log"
+echo -e "*** $(date) Start ***\n" > "$LOG"
+
+function end {
+	echo -e "\n*** $(date) End ***" >> "$LOG"
+}
+trap end EXIT
+
+function throw {
+	local message="$1"
+	echo -e "\e[31m$message\e[39m" >&2
+	exit 1
+}
+
+function execute {
 	local message="$1" command="$2"
 	echo -n "$message... "
-	echo "*** $message..." >> "$_logFile"
-	errorMessage="$(eval "sudo $command 2>&1" | tee -a "$_logFile" ; ( exit ${PIPESTATUS[0]} ))"
-	if [[ $? -eq 0 ]]; then
-		echo 'done' | tee -a "$_logFile"
-		return 0
-	else
-		echo 'failed' | tee -a "$_logFile"
-		echo
-		echo "$errorMessage"
-		exit 1
+	echo "*** $message..." >> "$LOG"
+	local errorMessage
+	errorMessage="$(eval "sudo $command 2>&1" | tee -a "$LOG"; (exit ${PIPESTATUS[0]}))"
+	if [[ $? -ne 0 ]]; then
+		echo 'failed' | tee -a "$LOG"
+		throw "$errorMessage"
 	fi
+	echo 'done' | tee -a "$LOG"
+	return 0
 }
 
-function patch # (file, patch)
-{
+function patch {
 	local file="$1" patch="$HOME/.config/$2"
 	echo -n "Patching file $file... "
-	echo "*** Patching file $file..." >> "$_logFile"
-	errorMessage="$(eval "sudo patch -N --dry-run \"$file\" < \"$patch\" 2>&1" | tee -a "$_logFile" ; ( exit ${PIPESTATUS[0]} ))"
-	if [[ $? -eq 0 ]]; then
-		eval "sudo patch -N \"$file\" < \"$patch\" 2>&1" >> "$_logFile"
-		echo "done" | tee -a "$_logFile"
-		return 0
-	else
-		if [[ -n "$(echo "$errorMessage" | grep 'Skipping patch.')" ]]; then
-			echo "skipped" | tee -a "$_logFile"
-			return 1
+	echo "*** Patching file $file..." >> "$LOG"
+	local errorMessage
+	errorMessage="$(eval "sudo patch -N --dry-run \"$file\" < \"$patch\" 2>&1" | tee -a "$LOG"; (exit ${PIPESTATUS[0]}))"
+	if [[ $? -ne 0 ]]; then
+		if [[ -z "$(echo "$errorMessage" | grep 'Skipping patch.')" ]]; then
+			echo 'failed' | tee -a "$LOG"
+			throw "$errorMessage"
 		fi
-		echo 'failed' | tee -a "$_logFile"
-		echo
-		echo "$errorMessage"
-		exit 2
+		echo "skipped" | tee -a "$LOG"
+		return 1
 	fi
+	eval "sudo patch -N \"$file\" < \"$patch\" 2>&1" >> "$LOG"
+	echo "done" | tee -a "$LOG"
+	return 0
 }
 
-function processEntwareNg # ()
-{
+function processEntwareNg {
 	# https://github.com/Entware/Entware-ng/wiki/Install-on-Synology-NAS
 	sudo mkdir -p /volume1/@entware-ng/opt
 	sudo mkdir -p /opt
@@ -52,7 +58,7 @@ function processEntwareNg # ()
 	if [[ -z "$(ls -A /volume1/@entware-ng/opt)" ]]; then
 		execute 'Installing Entware-ng' 'installEntwareNg'
 		sudo cp "$HOME/.bin/entware-startup.sh" /usr/local/etc/rc.d/
-		echo '*** Please reboot the nas ***' | tee -a "$_logFile"
+		echo '*** Please reboot the nas ***' | tee -a "$LOG"
 		exit
 	fi
 
@@ -60,21 +66,12 @@ function processEntwareNg # ()
 	execute 'Updating Entware-ng' 'opkg update'
 	execute 'Upgrading Entware-ng' 'opkg upgrade'
 
-	sudo opkg install less patch >> "$_logFile"
+	sudo opkg install less patch >> "$LOG"
 }
 
 sudo true
 
-echo "*** $(date) Start ***" > "$_logFile"
-echo >> "$_logFile"
-
-function end {
-	echo >> "$_logFile"
-	echo "*** $(date) End ***" >> "$_logFile"
-}
-trap end EXIT
-
 processEntwareNg
 execute 'Fixing permissions' "fixPermissions \"$HOME\" \"$USER\""
-patch /etc/ssh/sshd_config sshd_config.patch && echo '*** Please reboot the nas ***' | tee -a "$_logFile"
-execute 'Upgrading docker containers' "\"$HOME/media/upgrade\""
+patch /etc/ssh/sshd_config sshd_config.patch && echo '*** Please reboot the nas ***' | tee -a "$LOG"
+execute 'Upgrading docker containers' 'media/upgrade'
