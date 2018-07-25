@@ -66,7 +66,8 @@ function processEntwareNg {
 	execute 'Updating Entware-ng' 'opkg update'
 	execute 'Upgrading Entware-ng' 'opkg upgrade'
 
-	sudo opkg install less patch >> "$LOG"
+	# make sure basic packages are installed
+	sudo opkg install fish less patch >> "$LOG"
 }
 
 sudo true
