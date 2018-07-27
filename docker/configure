@@ -1,0 +1,64 @@
+#!/bin/sh
+
+cd "$(dirname "$(readlink -f "$0")")"
+
+function IsPort {
+	local port=$(echo "$1" | grep "^[1-9][0-9]*$")
+	if [[ -z "$port" ]]; then
+		>&2 echo "$1: invalid port"
+		exit 1
+	fi
+}
+
+[[ -f 'sslh.env' ]] && currentSslhPort="$(grep '^# SSLH port: ' 'sslh.env' | cut -d' ' -f4)"
+currentSslhPort="${currentSslhPort:-44322}"
+read -p 'SSLH port: ' -i "$currentSslhPort" -e sslhPort
+IsPort "$sslhPort"
+
+[[ -f 'sslh.env' ]] && currentHttpsHost="$(grep '^HTTPS_HOST=' 'sslh.env' | cut -d'=' -f2)"
+currentHttpsHost="${currentHttpsHost:-192.168.1.1}"
+read -p 'HTTPS host: ' -i "$currentHttpsHost" -e httpsHost
+if [[ -z "$httpsHost" ]]; then
+	>&2 echo "Host expected"
+	exit 1
+fi
+
+[[ -f 'sslh.env' ]] && currentHttpsPort="$(grep '^HTTPS_PORT=' 'sslh.env' | cut -d'=' -f2)"
+currentHttpsPort="${currentHttpsPort:-443}"
+read -p 'HTTPS port: ' -i "$currentHttpsPort" -e httpsPort
+IsPort "$httpsPort"
+
+[[ -f 'sslh.env' ]] && currentSshHost="$(grep '^SSH_HOST=' 'sslh.env' | cut -d'=' -f2)"
+currentSshHost="${currentSshHost:-192.168.1.1}"
+read -p 'SSH host: ' -i "$currentSshHost" -e sshHost
+if [[ -z "$sshHost" ]]; then
+	>&2 echo "Host expected"
+	exit 1
+fi
+
+[[ -f 'sslh.env' ]] && currentSshPort="$(grep '^SSH_PORT=' 'sslh.env' | cut -d'=' -f2)"
+currentSshPort="${currentSshPort:-22}"
+read -p 'SSH port: ' -i "$currentSshPort" -e sshPort
+IsPort "$sshPort"
+
+echo
+
+target='docker-compose.yml'
+echo "Writing $target..."
+cp -f 'docker-compose.template.yml' "$target"
+sed -i -e "s|%SSLH_PORT%|$sslhPort|g" "$target"
+
+target='sslh.env'
+echo "Writing $target..."
+echo "# SSLH port: $sslhPort" > "$target"
+echo >> "$target"
+echo '# HTTPS' >> "$target"
+echo "HTTPS_HOST=$httpsHost" >> "$target"
+echo "HTTPS_PORT=$httpsPort" >> "$target"
+echo >> "$target"
+echo '# SSH' >> "$target"
+echo "SSH_HOST=$sshHost" >> "$target"
+echo "SSH_PORT=$sshPort" >> "$target"
+
+echo
+echo 'Docker Compose configured successfully'

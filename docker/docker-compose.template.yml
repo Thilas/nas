@@ -1,0 +1,14 @@
+version: '3'
+services:
+
+  sslh:
+    # https://hub.docker.com/r/oorabona/sslh/
+    image: oorabona/sslh
+    container_name: sslh
+    hostname: sslh
+    env_file:
+      - sslh.env
+    ports:
+      - '%SSLH_PORT%:443'
+    command:
+      - -f

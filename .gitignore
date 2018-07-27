@@ -1,6 +1,10 @@
 # Ignore everything in root directory
 /*
 
+# Ignore configuration files in docker directory
+/docker/docker-compose.yml
+/docker/*.env
+
 # Ignore configuration files in media directory
+/media/docker-compose.yml
 /media/*.env
-/media/*.yml

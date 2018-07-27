@@ -2,50 +2,51 @@
 
 cd "$(dirname "$(readlink -f "$0")")"
 
-sudo true
-
-if [[ -z "$(sudo synopkg version Docker)" ]]; then
+if [[ -z "$(synopkg version Docker)" ]]; then
 	>&2 echo 'You must install Docker package first.'
 	exit 1
 fi
 
-[[ -f 'ids.env' ]] && currentUser="$(grep '# User: ' 'ids.env' | cut -d' ' -f3)"
+[[ -f 'ids.env' ]] && currentUser="$(grep '^# User: ' 'ids.env' | cut -d' ' -f3)"
 currentUser="${currentUser:-$USER}"
 read -p 'User: ' -i "$currentUser" -e user
 userId=$(id -u "$user")
 if [[ $? -ne 0 ]]; then
-	exit 2
+	exit 1
 fi
 homePath="$(eval echo "~$user")"
 if [[ ! -d "$homePath" ]]; then
 	>&2 echo "$user: home path does not exist"
-	exit 3
+	exit 1
 fi
 
-[[ -f 'ids.env' ]] && [[ "$user" -eq "$currentUser" ]] && currentGroup="$(grep '# Group: ' 'ids.env' | cut -d' ' -f3)"
+[[ -f 'ids.env' ]] && [[ "$user" -eq "$currentUser" ]] && currentGroup="$(grep '^# Group: ' 'ids.env' | cut -d' ' -f3)"
 currentGroup="${currentGroup:-$(id -gn "$user")}"
 read -p 'Group: ' -i "$currentGroup" -e group
 groupId=$(grep "^$group:" /etc/group | cut -d':' -f3)
 if [[ -z "$groupId" ]]; then
 	>&2 echo "$group: no such group"
-	exit 4
+	exit 1
 fi
 
-[[ -f 'tz.env' ]] && currentTimezone="$(grep 'TZ=' 'tz.env' | cut -d'=' -f2)"
+[[ -f 'tz.env' ]] && currentTimezone="$(grep '^TZ=' 'tz.env' | cut -d'=' -f2)"
 currentTimezone="${currentTimezone:-$(find /usr/share/zoneinfo -type f ! -name 'posixrules' -exec cmp -s {} /etc/localtime \; -print | sed -e 's@.*/zoneinfo/@@' | head -n1)}"
 read -p 'Timezone: ' -i "$currentTimezone" -e timezone
 if [[ ! -f "/usr/share/zoneinfo/$timezone" ]]; then
 	>&2 echo "$timezone: no such timezone"
-	exit 5
+	exit 1
 fi
 
 read -p 'Media path: ' -i '/volume1/media' -e mediaPath
 if [[ ! -d "$mediaPath" ]]; then
 	>&2 echo "$mediaPath: media path does not exist"
-	exit 6
+	exit 1
 fi
 
 echo
+sudo true
+echo
+
 target='docker-compose.yml'
 echo "Writing $target..."
 cp -f 'docker-compose.template.yml' "$target"
@@ -85,7 +86,4 @@ for directory in ${directories[@]}; do
 done
 
 echo
-sudo docker-compose pull
-
-echo
-sudo docker-compose up -d
+echo 'Docker Compose configured successfully'

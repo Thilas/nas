@@ -75,4 +75,5 @@ sudo true
 processEntwareNg
 execute 'Fixing permissions' "fixPermissions \"$HOME\" \"$USER\""
 patch /etc/ssh/sshd_config sshd_config.patch && echo '*** Please reboot the nas ***' | tee -a "$LOG"
-execute 'Upgrading docker containers' 'media/upgrade'
+execute 'Upgrading docker containers' 'docker/upgrade'
+execute 'Upgrading media containers' 'media/upgrade'
