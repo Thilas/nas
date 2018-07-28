@@ -33,6 +33,22 @@ services:
       - %MEDIA%/music:/data/music
       - %MEDIA%/tvshows:/data/tvshows
 
+  tautulli:
+    # https://hub.docker.com/r/tautulli/tautulli/
+    image: tautulli/tautulli
+    container_name: tautulli
+    hostname: tautulli
+    depends_on:
+      - plex
+    env_file:
+      - tz.env
+      - ids.env
+    ports:
+      - '8181:8181'
+    volumes:
+      - %HOME%/.media/tautulli:/config
+      - %HOME%/.media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+
   medusa:
     # https://hub.docker.com/r/linuxserver/medusa/
     image: linuxserver/medusa
@@ -49,20 +65,6 @@ services:
       - %HOME%/.media/medusa:/config
       - %MEDIA%/downloads/tvshows:/downloads
       - %MEDIA%/tvshows:/tv
-
-  tautulli:
-    # https://hub.docker.com/r/tautulli/tautulli/
-    image: tautulli/tautulli
-    container_name: tautulli
-    hostname: tautulli
-    env_file:
-      - tz.env
-      - ids.env
-    ports:
-      - '8181:8181'
-    volumes:
-      - %HOME%/.media/tautulli:/config
-      - %HOME%/.media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
 
   radarr:
     # https://hub.docker.com/r/linuxserver/radarr/
