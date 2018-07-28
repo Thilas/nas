@@ -18,11 +18,21 @@ This repository contains a bunch of scripts to help configure, maintain and oper
 - Install [Ubooquity](http://vaemendis.net/ubooquity/) ([docker](https://hub.docker.com/r/linuxserver/ubooquity/), [service](http://192.168.1.1:2202/), [administration](http://192.168.1.1:2203/admin/))
 
 # Scripts
-## nas
-`nas` installs/upgrades/configures all features mentioned above. Logs are available in `~/.log/nas.log`.
+## `configure`
+Each docker directory (`~/docker` and `~/media`) has a `configure` script that allows to configure the related `docker-compose.yml` file. It must be run once before starting the containers. They can be started using `nas` script (see below) or `docker-upgrade (docker|media)`
 
-## tvshows
+## `nas`
+`nas` installs/upgrades/fixes/starts all features mentioned above. Logs are available in `~/.log/nas.log`.
+
+## `tvshows`
 `tvshows` allows to download automatically new tv shows from a remote server, fix their permissions and send them to Medusa's post-processing. Configuration is located in `~/.tvshows`. Logs are available in `~/.log/tvshows.log`.
+
+# Media
+By default, all media services (Plex, Tautulli, Medusa, Radarr and Ubooquity) use the following locations:
+- `~/.media`: contains the configuration of each service
+- `/volume1/media`: contains all media files (i.e. books, comics, movies, music, tv shows)
+
+This `media` directory is customizable (thanks to media's `configure` script) but it must be created using DSM before configuring docker containers. All required subdirectories will then be created automatically, as well as `downloads/movies` and `downloads/tvshows` subdirectories.
 
 # Resources
 - https://github.com/Entware/Entware-ng/wiki/Install-on-Synology-NAS
