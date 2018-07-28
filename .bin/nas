@@ -70,7 +70,7 @@ function processEntwareNg {
 	sudo opkg install fish less patch >> "$LOG"
 }
 
-sudo true
+sudo true || throw 'Permission denied'
 
 processEntwareNg
 execute 'Fixing permissions' "fix-permissions \"$HOME\" \"$USER\""
