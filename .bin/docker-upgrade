@@ -1,6 +1,16 @@
 #!/bin/sh
 
+if [[ -z "$1" ]]; then
+	>&2 echo 'Directory expected'
+	exit 1
+fi
 cd "$(dirname "$(readlink -f "$0")")"
+
+if [[ ! -d "../$1" ]]; then
+	>&2 echo "$1: directory not found"
+	exit 1
+fi
+cd "../$1"
 
 if [[ ! -f docker-compose.yml ]]; then
 	>&2 echo "File docker-compose.yml does not exist. Please run 'configure' first."

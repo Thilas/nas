@@ -56,7 +56,7 @@ function processEntwareNg {
 	grep -qs ' /opt ' /proc/mounts || sudo mount -o bind /volume1/@entware-ng/opt /opt
 
 	if [[ -z "$(ls -A /volume1/@entware-ng/opt)" ]]; then
-		execute 'Installing Entware-ng' 'installEntwareNg'
+		execute 'Installing Entware-ng' 'install-entware'
 		sudo cp "$HOME/.bin/entware-startup.sh" /usr/local/etc/rc.d/
 		echo '*** Please reboot the nas ***' | tee -a "$LOG"
 		exit
@@ -73,7 +73,7 @@ function processEntwareNg {
 sudo true
 
 processEntwareNg
-execute 'Fixing permissions' "fixPermissions \"$HOME\" \"$USER\""
+execute 'Fixing permissions' "fix-permissions \"$HOME\" \"$USER\""
 patch /etc/ssh/sshd_config sshd_config.patch && echo '*** Please reboot the nas ***' | tee -a "$LOG"
-execute 'Upgrading docker containers' 'docker/upgrade'
-execute 'Upgrading media containers' 'media/upgrade'
+execute 'Upgrading docker containers' 'docker-upgrade docker'
+execute 'Upgrading media containers' 'docker-upgrade media'
