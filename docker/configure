@@ -10,11 +10,6 @@ function IsPort {
 	fi
 }
 
-[[ -f 'sslh.env' ]] && currentSslhPort="$(grep '^# SSLH port: ' 'sslh.env' | cut -d' ' -f4)"
-currentSslhPort="${currentSslhPort:-44322}"
-read -p 'SSLH port: ' -i "$currentSslhPort" -e sslhPort
-IsPort "$sslhPort"
-
 [[ -f 'sslh.env' ]] && currentHttpsHost="$(grep '^HTTPS_HOST=' 'sslh.env' | cut -d'=' -f2)"
 currentHttpsHost="${currentHttpsHost:-192.168.1.1}"
 read -p 'HTTPS host: ' -i "$currentHttpsHost" -e httpsHost
@@ -46,13 +41,10 @@ echo
 target='docker-compose.yml'
 echo "Writing $target..."
 cp -f 'docker-compose.template.yml' "$target"
-sed -i -e "s|%SSLH_PORT%|$sslhPort|g" "$target"
 
 target='sslh.env'
 echo "Writing $target..."
-echo "# SSLH port: $sslhPort" > "$target"
-echo >> "$target"
-echo '# HTTPS' >> "$target"
+echo '# HTTPS' > "$target"
 echo "HTTPS_HOST=$httpsHost" >> "$target"
 echo "HTTPS_PORT=$httpsPort" >> "$target"
 echo >> "$target"

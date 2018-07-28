@@ -9,6 +9,6 @@ services:
     env_file:
       - sslh.env
     ports:
-      - '%SSLH_PORT%:443'
+      - '44322:443'
     command:
       - -f
