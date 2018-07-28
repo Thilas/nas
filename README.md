@@ -25,7 +25,9 @@ Each docker directory (`~/docker` and `~/media`) has a `configure` script that a
 `nas` installs/upgrades/fixes/starts all features mentioned above. Logs are available in `~/.log/nas.log`.
 
 ## `tvshows`
-`tvshows` allows to download automatically new tv shows from a remote server, fix their permissions and send them to Medusa's post-processing. Configuration is located in `~/.tvshows`. Logs are available in `~/.log/tvshows.log`.
+`tvshows` allows to download automatically new tv shows from a remote server, fix their permissions (need sudo) and send them to Medusa's post-processing. Configuration is located in `~/.tvshows`. Logs are available in `~/.log/tvshows.log`.
+
+`tvshows` automatically impersonates the user configured for media services so the script can be run from root as well as from the configured user. It allows to easily schedule `tvshows`.
 
 # Media
 By default, all media services (Plex, Tautulli, Medusa, Radarr and Ubooquity) use the following locations:
