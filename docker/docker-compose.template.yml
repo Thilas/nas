@@ -2,13 +2,11 @@ version: '3'
 services:
 
   sslh:
-    # https://hub.docker.com/r/oorabona/sslh/
-    image: oorabona/sslh
+    # https://hub.docker.com/r/riftbit/sslh/
+    image: riftbit/sslh
     container_name: sslh
     hostname: sslh
     env_file:
       - sslh.env
     ports:
       - '44322:443'
-    command:
-      - -f

@@ -10,7 +10,7 @@ function IsPort {
 	fi
 }
 
-[[ -f 'sslh.env' ]] && currentHttpsHost="$(grep '^HTTPS_HOST=' 'sslh.env' | cut -d'=' -f2)"
+[[ -f 'sslh.env' ]] && currentHttpsHost="$(grep '^# HTTPS host: ' 'sslh.env' | cut -d' ' -f4)"
 currentHttpsHost="${currentHttpsHost:-192.168.1.1}"
 read -p 'HTTPS host: ' -i "$currentHttpsHost" -e httpsHost
 if [[ -z "$httpsHost" ]]; then
@@ -18,12 +18,12 @@ if [[ -z "$httpsHost" ]]; then
 	exit 1
 fi
 
-[[ -f 'sslh.env' ]] && currentHttpsPort="$(grep '^HTTPS_PORT=' 'sslh.env' | cut -d'=' -f2)"
+[[ -f 'sslh.env' ]] && currentHttpsPort="$(grep '^# HTTPS port: ' 'sslh.env' | cut -d' ' -f4)"
 currentHttpsPort="${currentHttpsPort:-443}"
 read -p 'HTTPS port: ' -i "$currentHttpsPort" -e httpsPort
 IsPort "$httpsPort"
 
-[[ -f 'sslh.env' ]] && currentSshHost="$(grep '^SSH_HOST=' 'sslh.env' | cut -d'=' -f2)"
+[[ -f 'sslh.env' ]] && currentSshHost="$(grep '^# SSH host: ' 'sslh.env' | cut -d' ' -f4)"
 currentSshHost="${currentSshHost:-192.168.1.1}"
 read -p 'SSH host: ' -i "$currentSshHost" -e sshHost
 if [[ -z "$sshHost" ]]; then
@@ -31,7 +31,7 @@ if [[ -z "$sshHost" ]]; then
 	exit 1
 fi
 
-[[ -f 'sslh.env' ]] && currentSshPort="$(grep '^SSH_PORT=' 'sslh.env' | cut -d'=' -f2)"
+[[ -f 'sslh.env' ]] && currentSshPort="$(grep '^# SSH port: ' 'sslh.env' | cut -d' ' -f4)"
 currentSshPort="${currentSshPort:-22}"
 read -p 'SSH port: ' -i "$currentSshPort" -e sshPort
 IsPort "$sshPort"
@@ -44,13 +44,13 @@ cp -f 'docker-compose.template.yml' "$target"
 
 target='sslh.env'
 echo "Writing $target..."
-echo '# HTTPS' > "$target"
-echo "HTTPS_HOST=$httpsHost" >> "$target"
-echo "HTTPS_PORT=$httpsPort" >> "$target"
+echo "# HTTPS host: $httpsHost" > "$target"
+echo "# HTTPS port: $httpsPort" >> "$target"
 echo >> "$target"
-echo '# SSH' >> "$target"
-echo "SSH_HOST=$sshHost" >> "$target"
-echo "SSH_PORT=$sshPort" >> "$target"
+echo "# SSH host: $sshHost" >> "$target"
+echo "# SSH port: $sshPort" >> "$target"
+echo >> "$target"
+echo "SSLH_OPTS=-p 0.0.0.0:443 --ssh $sshHost:$sshPort --tls $httpsHost:$httpsPort" >> "$target"
 
 echo
 echo 'Docker Compose configured successfully'
