@@ -1,0 +1,19 @@
+[user]
+	name  = Thomas Démoulins
+	email = tdemoulins@gmail.com
+[alias]
+	br     = branch
+	ci     = commit
+	cia    = commit --all
+	cim    = commit --message
+	ciam   = commit --all --message
+	amend  = commit --all --amend --no-edit
+	co     = checkout
+	cob    = !git checkout -b $1 && git push --set-upstream origin
+	master = !git checkout master && git status --short --branch
+	cp     = cherry-pick
+	has    = branch --all --contains
+	hist   = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+	lgg    = !git log --graph --decorate=short --abbrev-commit --numstat --date=relative -4
+	st     = status --short --branch
+
