@@ -13,7 +13,7 @@
 [[ $- != *i* ]] && return
 
 export GIT_PS1_SHOWUPSTREAM='git verbose'
-GIT_PS1='\[\033[01;37m\]`status=$(git status --porcelain=v1 2> /dev/null);[[ $(echo -e "$status"|grep "^ M ") ]]&&echo "\[\033[31m\]"||([[ -n $status ]]&&echo "\[\033[33m\]"||echo "\[\033[32m\]")`$(__git_ps1 "(%s) ")'
+GIT_PS1='\[\033[01;37m\]`status=$(git status --porcelain=v1 2> /dev/null);[[ $(echo -e "$status"|grep "^ M ") ]]&&echo "\[\033[31m\]"||([[ -n $status ]]&&echo "\[\033[33m\]"||echo "\[\033[96m\]")`$(__git_ps1 "(%s) ")'
 export PS1="$GIT_PS1$PS1"
 
 alias df='df -h'
