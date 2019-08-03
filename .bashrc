@@ -6,6 +6,9 @@
 
 [[ -f /opt/bin/less ]] && export PAGER=less && export LESS=-R
 
+[[ -f ~/.git/git-completion.bash ]] && . ~/.git/git-completion.bash
+[[ -f ~/.git/git-prompt.sh ]] && . ~/.git/git-prompt.sh
+
 # If not running interactively, don't do anything else
 [[ $- != *i* ]] && return
 
