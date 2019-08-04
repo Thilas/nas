@@ -24,4 +24,4 @@ fi
 
 sudo docker-compose pull $2
 echo
-sudo docker-compose up -d $2
+sudo docker-compose up -d --build $2
