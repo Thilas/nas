@@ -17,6 +17,8 @@ GIT_PS1='\[\033[01;37m\]`status=$(git status --porcelain=v1 2> /dev/null);[[ $(e
 export PS1="$GIT_PS1$PS1"
 
 alias df='df -h'
+alias docker='sudo docker'
+alias docker-compose='sudo docker-compose'
 alias du='du -h'
 alias ls='ls --color=auto -h'
 
