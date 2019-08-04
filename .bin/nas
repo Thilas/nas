@@ -76,9 +76,5 @@ processEntwareNg
 execute 'Fixing permissions' "fix-permissions \"$HOME\" \"$USER\""
 patch /etc/ssh/sshd_config sshd_config.patch && echo '*** Please reboot the nas ***' | tee -a "$LOG"
 execute 'Upgrading docker containers' 'docker-upgrade docker'
-execute 'Upgrading plex container' 'docker-upgrade media plex'
+execute 'Upgrading media containers' 'docker-upgrade media'
 execute 'Restarting plex container' 'docker restart plex'
-execute 'Upgrading tautulli container' 'docker-upgrade media tautulli'
-#execute 'Upgrading medusa container' 'docker-upgrade media medusa'
-execute 'Upgrading radarr container' 'docker-upgrade media radarr'
-execute 'Upgrading ubooquity container' 'docker-upgrade media ubooquity'
