@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 services:
 
   sslh:
@@ -7,6 +7,6 @@ services:
     container_name: sslh
     hostname: sslh
     env_file:
-      - sslh.env
+    - sslh.env
     ports:
-      - '44322:443'
+    - '44322:443'
