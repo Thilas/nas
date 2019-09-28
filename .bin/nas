@@ -73,7 +73,7 @@ function processEntwareNg {
 sudo true || throw 'Permission denied'
 
 processEntwareNg
-execute 'Fixing permissions' "fix-permissions \"$HOME\" \"$USER\""
+#execute 'Fixing permissions' "fix-permissions \"$HOME\" \"$USER\""
 patch /etc/ssh/sshd_config sshd_config.patch && echo '*** Please reboot the nas ***' | tee -a "$LOG"
 execute 'Upgrading docker containers' 'docker-upgrade docker'
 execute 'Upgrading media containers' 'docker-upgrade media'
