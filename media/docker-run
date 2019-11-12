@@ -1,9 +1,0 @@
-#!/bin/sh
-
-PWD="$(cd "$(dirname "${BASH_SOURCE[0]}")">/dev/null 2>&1 && pwd)"
-
-docker run -d --name plex --hostname plex --network=host -m 3g --env-file "$PWD/tz.env" -e PLEX_UID=1026 -e PLEX_GID=100 -v /var/services/homes/thomas/.media/plex:/config -v /volume1/media/movies:/data/movies -v /volume1/media/music:/data/music -v /volume1/media/tvshows:/data/tvshows plexinc/pms-docker:public
-docker run -d --name tautulli --hostname tautulli --env-file "$PWD/tz.env" --env-file "$PWD/ids.env" -p 8181:8181 -v /var/services/homes/thomas/.media/tautulli:/config -v "/var/services/homes/thomas/.media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro" tautulli/tautulli
-docker run -d --name medusa --hostname medusa -m 512m --env-file "$PWD/tz.env" --env-file "$PWD/ids.env" -p 8081:8081 -v /var/services/homes/thomas/.media/medusa:/config -v /volume1/media/downloads/tvshows:/downloads -v /volume1/media/tvshows:/tv linuxserver/medusa:latest-thilas
-docker run -d --name radarr --hostname radarr --env-file "$PWD/tz.env" --env-file "$PWD/ids.env" -p 7878:7878 -v /var/services/homes/thomas/.media/radarr:/config -v /volume1/media/downloads/movies:/downloads -v /volume1/media/movies:/movies linuxserver/radarr
-docker run -d --name ubooquity --hostname ubooquity --env-file "$PWD/tz.env" --env-file "$PWD/ids.env" -p 2202:2202 -p 2203:2203 -v /var/services/homes/thomas/.media/ubooquity:/config -v /volume1/media/books:/books -v /volume1/media/comics:/comics -v /volume1/downloads/piano:/piano linuxserver/ubooquity

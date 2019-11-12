@@ -1,5 +1,0 @@
-#!/bin/sh
-
-PWD="$(cd "$(dirname "${BASH_SOURCE[0]}")">/dev/null 2>&1 && pwd)"
-
-docker run -d --name sslh --hostname sslh --env-file "$PWD/sslh.env" -p 44322:443 riftbit/sslh
