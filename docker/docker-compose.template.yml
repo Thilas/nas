@@ -6,7 +6,6 @@ services:
     image: riftbit/sslh
     container_name: sslh
     hostname: sslh
+    network_mode: host
     env_file:
     - sslh.env
-    ports:
-    - '44322:443'
