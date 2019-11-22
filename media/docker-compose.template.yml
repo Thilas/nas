@@ -3,7 +3,7 @@ services:
 
   plex:
     # https://hub.docker.com/r/plexinc/pms-docker/
-    image: plexinc/pms-docker:public
+    image: plexinc/pms-docker:plexpass
     container_name: plex
     hostname: plex
     network_mode: host
@@ -20,7 +20,7 @@ services:
     - PLEX_GID=%GID%
     # IP/netmask entries which allow access to the server without requiring authorization
     # - ALLOWED_NETWORKS=<allowedNetworks>
-    #ports:
+    # ports:
     # - '32400:32400/tcp' # for access to the Plex Media Server [required]
     # - '1900:1900/udp' # for access to the Plex DLNA Server
     # - '3005:3005/tcp' # for controlling Plex Home Theater via Plex Companion
@@ -94,7 +94,7 @@ services:
     env_file:
     - tz.env
     - ids.env
-    #environment:
+    # environment:
     # Set the maximum memory
     # - MAXMEM=256
     ports:
