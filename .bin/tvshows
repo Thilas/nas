@@ -53,13 +53,13 @@ fi
 # Display latest available tv shows
 if [[ $DEBUGTVSHOWS -gt 0 ]]; then
 	show 'Latest available tv shows:'
-	mediado ssh "$SERVER" "find \"$SOURCE\" -type f -printf '%C+ %P\\n' | sort -n | egrep -i \"^[^ ]+ ($TVSHOWS)/.+$EXTENSIONS$\" | tail -$DEBUGTVSHOWS" 2>&1 | tee -a "$LOG"
+	mediado ssh "$SERVER" "find \"$SOURCE\" -type f -printf '%T+ %P\\n' | sort -n | egrep -i \"^[^ ]+ ($TVSHOWS)/.+$EXTENSIONS$\" | tail -$DEBUGTVSHOWS" 2>&1 | tee -a "$LOG"
 	log
 fi
 
 # Load latest downloaded tv show
 if [[ ! -f "$CACHE" ]]; then
-	LATEST="$(mediado ssh "$SERVER" "find \"$SOURCE\" -type f -printf '%C@ %P\\n' | sort -n | egrep -i \"^[^ ]+ ($TVSHOWS)/.+$EXTENSIONS$\" | tail -1 | cut -f2- -d' '")"
+	LATEST="$(mediado ssh "$SERVER" "find \"$SOURCE\" -type f -printf '%T@ %P\\n' | sort -n | egrep -i \"^[^ ]+ ($TVSHOWS)/.+$EXTENSIONS$\" | tail -1 | cut -f2- -d' '")"
 	mediado echo -n "$LATEST" > "$CACHE"
 	log 'First run, nothing will be downloaded.'
 	show 'Latest tv show:' "$LATEST"
@@ -78,11 +78,11 @@ mediado ssh "$SERVER" "find \"$SOURCE\" -type f -newercc \"$SOURCE/$LATEST\" -pr
 if [[ $DEBUGTVSHOWS -gt 0 ]]; then
 	log
 	show 'Latest downloaded tv shows:'
-	find "$DESTINATION" -type f -printf '%C@ %P\n' | sort -n | tail -$DEBUGTVSHOWS | cut -f2- -d' ' | tee -a "$LOG"
+	find "$DESTINATION" -type f -printf '%T@ %P\n' | sort -n | tail -$DEBUGTVSHOWS | cut -f2- -d' ' | tee -a "$LOG"
 fi
 
 # Save new latest downloaded tv show if any
-LATEST="$(find "$DESTINATION" -type f -printf '%C@ %P\n' | sort -n | tail -1 | cut -f2- -d' ')"
+LATEST="$(find "$DESTINATION" -type f -printf '%T@ %P\n' | sort -n | tail -1 | cut -f2- -d' ')"
 if [[ -n "$LATEST" ]]; then
 	mediado echo -n "$LATEST" > "$CACHE"
 	log
