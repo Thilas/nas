@@ -78,3 +78,5 @@ patch /etc/ssh/sshd_config sshd_config.patch && echo '*** Please reboot the nas 
 execute 'Upgrading docker containers' 'docker-upgrade docker'
 execute 'Upgrading media containers' 'docker-upgrade media'
 execute 'Restarting plex container' 'docker restart plex'
+execute 'Pruning docker images' 'docker image prune --force'
+
