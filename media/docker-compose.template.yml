@@ -1,11 +1,23 @@
 version: '2'
 services:
 
+  plex-betaseries-webhook:
+    # https://hub.docker.com/r/thilas/plex-betaseries-webhook/
+    image: thilas/plex-betaseries-webhook
+    container_name: plex-betaseries-webhook
+    hostname: plex-betaseries-webhook
+    env_file:
+    - betaseries.env
+    ports:
+    - '12000:12000'
+
   plex:
     # https://hub.docker.com/r/plexinc/pms-docker/
     image: plexinc/pms-docker:plexpass
     container_name: plex
     hostname: plex
+    depends_on:
+    - plex-betaseries-webhook
     network_mode: host
     mem_limit: 3g
     env_file:

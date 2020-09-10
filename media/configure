@@ -7,6 +7,19 @@ if [[ -z "$(synopkg version Docker)" ]]; then
 	exit 1
 fi
 
+if [[ -f 'betaseries.env' ]]; then
+	currentPlexWebhook="$(grep '^SERVER_URL=' 'betaseries.env' | cut -d'=' -f2)"
+	currentBetaseriesClientId="$(grep '^BETASERIES_CLIENTID=' 'betaseries.env' | cut -d'=' -f2)"
+	currentBetaseriesClientSecret="$(grep '^BETASERIES_CLIENTSECRET=' 'betaseries.env' | cut -d'=' -f2)"
+fi
+read -p 'Plex webhook for BetaSeries: ' -i "$currentPlexWebhook" -e plexWebhook
+read -p 'BetaSeries client id: ' -i "$currentBetaseriesClientId" -e betaseriesClientId
+read -p 'BetaSeries client secret: ' -i "$currentBetaseriesClientSecret" -e betaseriesClientSecret
+if [[ -z "$plexWebhook" ]] || [[ -z "$betaseriesClientId" ]] || [[ -z "$betaseriesClientSecret" ]]; then
+	>&2 echo "invalid plex webhook for betaseries"
+	exit 1
+fi
+
 [[ -f 'ids.env' ]] && currentUser="$(grep '^# User: ' 'ids.env' | cut -d' ' -f3)"
 currentUser="${currentUser:-$USER}"
 read -p 'User: ' -i "$currentUser" -e user
@@ -54,6 +67,13 @@ sed -i -e "s|%UID%|$userId|g" "$target"
 sed -i -e "s|%GID%|$groupId|g" "$target"
 sed -i -e "s|%HOME%|$homePath|g" "$target"
 sed -i -e "s|%MEDIA%|$mediaPath|g" "$target"
+
+target='betaseries.env'
+echo "Writing $target..."
+echo '# Plex webhook for BetaSeries configuration' > "$target"
+echo "SERVER_URL=$plexWebhook" >> "$target"
+echo "BETASERIES_CLIENTID=$betaseriesClientId" >> "$target"
+echo "BETASERIES_CLIENTSECRET=$betaseriesClientSecret" >> "$target"
 
 target='ids.env'
 echo "Writing $target..."
