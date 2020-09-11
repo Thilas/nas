@@ -10,6 +10,7 @@ services:
     - betaseries.env
     ports:
     - '12000:12000'
+    restart: unless-stopped
 
   plex:
     # https://hub.docker.com/r/plexinc/pms-docker/
@@ -45,6 +46,7 @@ services:
     - %MEDIA%/movies:/data/movies
     - %MEDIA%/music:/data/music
     - %MEDIA%/tvshows:/data/tvshows
+    restart: unless-stopped
 
   tautulli:
     # https://hub.docker.com/r/tautulli/tautulli/
@@ -61,6 +63,7 @@ services:
     volumes:
     - %HOME%/.media/tautulli:/config
     - %HOME%/.media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+    restart: unless-stopped
 
   medusa:
     # https://hub.docker.com/r/linuxserver/medusa/
@@ -80,6 +83,7 @@ services:
     - %HOME%/.media/medusa:/config
     - %MEDIA%/downloads/tvshows:/downloads
     - %MEDIA%/tvshows:/tv
+    restart: unless-stopped
 
   radarr:
     # https://hub.docker.com/r/linuxserver/radarr/
@@ -97,6 +101,7 @@ services:
     - %HOME%/.media/radarr:/config
     - %MEDIA%/downloads/movies:/downloads
     - %MEDIA%/movies:/movies
+    restart: unless-stopped
 
   ubooquity:
     # https://hub.docker.com/r/linuxserver/ubooquity/
@@ -116,3 +121,4 @@ services:
     - %HOME%/.media/ubooquity:/config
     - %MEDIA%/books:/books
     - %MEDIA%/comics:/comics
+    restart: unless-stopped

@@ -9,3 +9,4 @@ services:
     network_mode: host
     env_file:
     - sslh.env
+    restart: unless-stopped
