@@ -8,5 +8,6 @@ services:
     hostname: sslh
     network_mode: host
     env_file:
-    - sslh.env
+      - sslh.env
     restart: unless-stopped
+

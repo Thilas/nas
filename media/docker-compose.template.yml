@@ -7,9 +7,9 @@ services:
     container_name: plex-betaseries-webhook
     hostname: plex-betaseries-webhook
     env_file:
-    - betaseries.env
+      - betaseries.env
     ports:
-    - '12000:12000'
+      - '12000:12000'
     restart: unless-stopped
 
   plex:
@@ -18,34 +18,34 @@ services:
     container_name: plex
     hostname: plex
     depends_on:
-    - plex-betaseries-webhook
+      - plex-betaseries-webhook
     network_mode: host
     mem_limit: 3g
     env_file:
-    - tz.env
+      - tz.env
     environment:
-    # The claim token for the server to obtain a real server token: https://www.plex.tv/claim
-    # - PLEX_CLAIM=<claimToken>
-    # This variable defines the additional IPs on which the server may be be found
-    # - ADVERTISE_IP=http://<hostIPAddress>:32400/
-    # The user / group id of the plex user / group created inside the container
-    - PLEX_UID=%UID%
-    - PLEX_GID=%GID%
-    # IP/netmask entries which allow access to the server without requiring authorization
-    # - ALLOWED_NETWORKS=<allowedNetworks>
+      # The claim token for the server to obtain a real server token: https://www.plex.tv/claim
+      # - PLEX_CLAIM=<claimToken>
+      # This variable defines the additional IPs on which the server may be be found
+      # - ADVERTISE_IP=http://<hostIPAddress>:32400/
+      # The user / group id of the plex user / group created inside the container
+      - PLEX_UID=%UID%
+      - PLEX_GID=%GID%
+      # IP/netmask entries which allow access to the server without requiring authorization
+      # - ALLOWED_NETWORKS=<allowedNetworks>
     # ports:
-    # - '32400:32400/tcp' # for access to the Plex Media Server [required]
-    # - '1900:1900/udp' # for access to the Plex DLNA Server
-    # - '3005:3005/tcp' # for controlling Plex Home Theater via Plex Companion
-    # - '8324:8324/tcp' # for controlling Plex for Roku via Plex Companion
-    # - '32410:32410/udp' # for current GDM network discovery
-    # - '32412-32414:32412-32414/udp' # for current GDM network discovery
-    # - '32469:32469/tcp' # for access to the Plex DLNA Server
+    #   - '32400:32400/tcp' # for access to the Plex Media Server [required]
+    #   - '1900:1900/udp' # for access to the Plex DLNA Server
+    #   - '3005:3005/tcp' # for controlling Plex Home Theater via Plex Companion
+    #   - '8324:8324/tcp' # for controlling Plex for Roku via Plex Companion
+    #   - '32410:32410/udp' # for current GDM network discovery
+    #   - '32412-32414:32412-32414/udp' # for current GDM network discovery
+    #   - '32469:32469/tcp' # for access to the Plex DLNA Server
     volumes:
-    - %HOME%/.media/plex:/config
-    - %MEDIA%/movies:/data/movies
-    - %MEDIA%/music:/data/music
-    - %MEDIA%/tvshows:/data/tvshows
+      - %HOME%/.media/plex:/config
+      - %MEDIA%/movies:/data/movies
+      - %MEDIA%/music:/data/music
+      - %MEDIA%/tvshows:/data/tvshows
     restart: unless-stopped
 
   tautulli:
@@ -54,15 +54,15 @@ services:
     container_name: tautulli
     hostname: tautulli
     depends_on:
-    - plex
+      - plex
     env_file:
-    - tz.env
-    - ids.env
+      - tz.env
+      - ids.env
     ports:
-    - '8181:8181'
+      - '8181:8181'
     volumes:
-    - %HOME%/.media/tautulli:/config
-    - %HOME%/.media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+      - %HOME%/.media/tautulli:/config
+      - %HOME%/.media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
     restart: unless-stopped
 
   medusa:
@@ -72,17 +72,17 @@ services:
     container_name: medusa
     hostname: medusa
     depends_on:
-    - plex
+      - plex
     mem_limit: 512m
     env_file:
-    - tz.env
-    - ids.env
+      - tz.env
+      - ids.env
     ports:
-    - '8081:8081'
+      - '8081:8081'
     volumes:
-    - %HOME%/.media/medusa:/config
-    - %MEDIA%/downloads/tvshows:/downloads
-    - %MEDIA%/tvshows:/tv
+      - %HOME%/.media/medusa:/config
+      - %MEDIA%/downloads/tvshows:/downloads
+      - %MEDIA%/tvshows:/tv
     restart: unless-stopped
 
   radarr:
@@ -91,16 +91,16 @@ services:
     container_name: radarr
     hostname: radarr
     depends_on:
-    - plex
+      - plex
     env_file:
-    - tz.env
-    - ids.env
+      - tz.env
+      - ids.env
     ports:
-    - '7878:7878'
+      - '7878:7878'
     volumes:
-    - %HOME%/.media/radarr:/config
-    - %MEDIA%/downloads/movies:/downloads
-    - %MEDIA%/movies:/movies
+      - %HOME%/.media/radarr:/config
+      - %MEDIA%/downloads/movies:/downloads
+      - %MEDIA%/movies:/movies
     restart: unless-stopped
 
   ubooquity:
@@ -109,16 +109,17 @@ services:
     container_name: ubooquity
     hostname: ubooquity
     env_file:
-    - tz.env
-    - ids.env
+      - tz.env
+      - ids.env
     # environment:
-    # Set the maximum memory
-    # - MAXMEM=256
+    #   # Set the maximum memory
+    #   - MAXMEM=256
     ports:
-    - '2202:2202'
-    - '2203:2203'
+      - '2202:2202'
+      - '2203:2203'
     volumes:
-    - %HOME%/.media/ubooquity:/config
-    - %MEDIA%/books:/books
-    - %MEDIA%/comics:/comics
+      - %HOME%/.media/ubooquity:/config
+      - %MEDIA%/books:/books
+      - %MEDIA%/comics:/comics
     restart: unless-stopped
+
