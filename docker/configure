@@ -2,39 +2,21 @@
 
 cd "$(dirname "$(readlink -f "$0")")"
 
-function IsPort {
-	local port=$(echo "$1" | grep "^[1-9][0-9]*$")
-	if [[ -z "$port" ]]; then
-		>&2 echo "$1: invalid port"
-		exit 1
-	fi
+envTarget='sslh.env'
+portPattern='[1-9][0-9]{0,4}'
+
+function readValue { # prompt, default, variable, pattern
+	[[ -f "$envTarget" ]] && current="$(grep "^# $1: " "$envTarget" | cut -d' ' -f4)" || current=""
+	read -p "$1: " -i "${current:-$2}" -e $3
+	value="$(echo "${!3}" | egrep "^${4:-.+}$")"
+	[[ -z "$value" ]] && echo "Invalid value: \"${!3}\"" >&2 && exit 1
 }
 
-[[ -f 'sslh.env' ]] && currentHttpsHost="$(grep '^# HTTPS host: ' 'sslh.env' | cut -d' ' -f4)"
-currentHttpsHost="${currentHttpsHost:-192.168.1.1}"
-read -p 'HTTPS host: ' -i "$currentHttpsHost" -e httpsHost
-if [[ -z "$httpsHost" ]]; then
-	>&2 echo "Host expected"
-	exit 1
-fi
-
-[[ -f 'sslh.env' ]] && currentHttpsPort="$(grep '^# HTTPS port: ' 'sslh.env' | cut -d' ' -f4)"
-currentHttpsPort="${currentHttpsPort:-443}"
-read -p 'HTTPS port: ' -i "$currentHttpsPort" -e httpsPort
-IsPort "$httpsPort"
-
-[[ -f 'sslh.env' ]] && currentSshHost="$(grep '^# SSH host: ' 'sslh.env' | cut -d' ' -f4)"
-currentSshHost="${currentSshHost:-192.168.1.1}"
-read -p 'SSH host: ' -i "$currentSshHost" -e sshHost
-if [[ -z "$sshHost" ]]; then
-	>&2 echo "Host expected"
-	exit 1
-fi
-
-[[ -f 'sslh.env' ]] && currentSshPort="$(grep '^# SSH port: ' 'sslh.env' | cut -d' ' -f4)"
-currentSshPort="${currentSshPort:-22}"
-read -p 'SSH port: ' -i "$currentSshPort" -e sshPort
-IsPort "$sshPort"
+readValue 'Listening port' '44322' listeningPort "$portPattern"
+readValue 'SSH host' '127.0.0.1' sshHost
+readValue 'SSH port' '22' sshPort "$portPattern"
+readValue 'HTTPS host' '127.0.0.1' httpsHost
+readValue 'HTTPS port' '443' httpsPort "$portPattern"
 
 echo
 
@@ -42,15 +24,15 @@ target='docker-compose.yml'
 echo "Writing $target..."
 cp -f 'docker-compose.template.yml' "$target"
 
-target='sslh.env'
+target="$envTarget"
 echo "Writing $target..."
-echo "# HTTPS host: $httpsHost" > "$target"
-echo "# HTTPS port: $httpsPort" >> "$target"
-echo >> "$target"
+echo "# Listening port: $listeningPort" > "$target"
 echo "# SSH host: $sshHost" >> "$target"
 echo "# SSH port: $sshPort" >> "$target"
+echo "# HTTPS host: $httpsHost" >> "$target"
+echo "# HTTPS port: $httpsPort" >> "$target"
 echo >> "$target"
-echo "SSLH_OPTS=-p 0.0.0.0:443 --ssh $sshHost:$sshPort --tls $httpsHost:$httpsPort" >> "$target"
+echo "SSLH_OPTS=-p 0.0.0.0:$listeningPort --ssh $sshHost:$sshPort --tls $httpsHost:$httpsPort" >> "$target"
 
 echo
 echo 'Docker Compose configured successfully'
