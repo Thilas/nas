@@ -1,19 +1,8 @@
-version: '2'
+version: "2.4"
 services:
 
-  plex-betaseries-webhook:
-    # https://hub.docker.com/r/thilas/plex-betaseries-webhook/
-    image: thilas/plex-betaseries-webhook
-    container_name: plex-betaseries-webhook
-    hostname: plex-betaseries-webhook
-    env_file:
-      - betaseries.env
-    ports:
-      - '12000:12000'
-    restart: unless-stopped
-
   plex:
-    # https://hub.docker.com/r/plexinc/pms-docker/
+    # https://hub.docker.com/r/plexinc/pms-docker
     image: plexinc/pms-docker:plexpass
     container_name: plex
     hostname: plex
@@ -34,22 +23,33 @@ services:
       # IP/netmask entries which allow access to the server without requiring authorization
       # - ALLOWED_NETWORKS=<allowedNetworks>
     # ports:
-    #   - '32400:32400/tcp' # for access to the Plex Media Server [required]
-    #   - '1900:1900/udp' # for access to the Plex DLNA Server
-    #   - '3005:3005/tcp' # for controlling Plex Home Theater via Plex Companion
-    #   - '8324:8324/tcp' # for controlling Plex for Roku via Plex Companion
-    #   - '32410:32410/udp' # for current GDM network discovery
-    #   - '32412-32414:32412-32414/udp' # for current GDM network discovery
-    #   - '32469:32469/tcp' # for access to the Plex DLNA Server
+    #   - 32400:32400/tcp             # for access to the Plex Media Server [required]
+    #   - 1900:1900/udp               # for access to the Plex DLNA Server
+    #   - 3005:3005/tcp               # for controlling Plex Home Theater via Plex Companion
+    #   - 8324:8324/tcp               # for controlling Plex for Roku via Plex Companion
+    #   - 32410:32410/udp             # for current GDM network discovery
+    #   - 32412-32414:32412-32414/udp # for current GDM network discovery
+    #   - 32469:32469/tcp             # for access to the Plex DLNA Server
     volumes:
-      - %HOME%/.media/plex:/config
+      - %HOME%/.docker/plex:/config
       - %MEDIA%/movies:/data/movies
       - %MEDIA%/music:/data/music
       - %MEDIA%/tvshows:/data/tvshows
     restart: unless-stopped
 
+  plex-betaseries-webhook:
+    # https://hub.docker.com/r/thilas/plex-betaseries-webhook
+    image: thilas/plex-betaseries-webhook
+    container_name: plex-betaseries-webhook
+    hostname: plex-betaseries-webhook
+    env_file:
+      - betaseries.env
+    ports:
+      - 12000:12000
+    restart: unless-stopped
+
   tautulli:
-    # https://hub.docker.com/r/tautulli/tautulli/
+    # https://hub.docker.com/r/tautulli/tautulli
     image: tautulli/tautulli
     container_name: tautulli
     hostname: tautulli
@@ -59,14 +59,14 @@ services:
       - tz.env
       - ids.env
     ports:
-      - '8181:8181'
+      - 8181:8181
     volumes:
-      - %HOME%/.media/tautulli:/config
-      - %HOME%/.media/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+      - %HOME%/.docker/tautulli:/config
+      - %HOME%/.docker/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
     restart: unless-stopped
 
   medusa:
-    # https://hub.docker.com/r/linuxserver/medusa/
+    # https://hub.docker.com/r/linuxserver/medusa
     build: ./medusa
     image: linuxserver/medusa:latest-thilas
     container_name: medusa
@@ -78,15 +78,15 @@ services:
       - tz.env
       - ids.env
     ports:
-      - '8081:8081'
+      - 8081:8081
     volumes:
-      - %HOME%/.media/medusa:/config
+      - %HOME%/.docker/medusa:/config
       - %MEDIA%/downloads/tvshows:/downloads
       - %MEDIA%/tvshows:/tv
     restart: unless-stopped
 
   radarr:
-    # https://hub.docker.com/r/linuxserver/radarr/
+    # https://hub.docker.com/r/linuxserver/radarr
     image: linuxserver/radarr
     container_name: radarr
     hostname: radarr
@@ -96,15 +96,15 @@ services:
       - tz.env
       - ids.env
     ports:
-      - '7878:7878'
+      - 7878:7878
     volumes:
-      - %HOME%/.media/radarr:/config
+      - %HOME%/.docker/radarr:/config
       - %MEDIA%/downloads/movies:/downloads
       - %MEDIA%/movies:/movies
     restart: unless-stopped
 
   ubooquity:
-    # https://hub.docker.com/r/linuxserver/ubooquity/
+    # https://hub.docker.com/r/linuxserver/ubooquity
     image: linuxserver/ubooquity
     container_name: ubooquity
     hostname: ubooquity
@@ -115,11 +115,31 @@ services:
     #   # Set the maximum memory
     #   - MAXMEM=256
     ports:
-      - '2202:2202'
-      - '2203:2203'
+      - 2202:2202
+      - 2203:2203
     volumes:
-      - %HOME%/.media/ubooquity:/config
+      - %HOME%/.docker/ubooquity:/config
       - %MEDIA%/books:/books
       - %MEDIA%/comics:/comics
+      - /volume1/downloads/piano:/piano
     restart: unless-stopped
 
+  komga:
+    # https://hub.docker.com/r/gotson/komga
+    image: gotson/komga
+    container_name: komga
+    hostname: komga
+    user: %UID%:%GID%
+    env_file:
+      - tz.env
+    # environment:
+    #   # Set the maximum memory
+    #   - JAVA_TOOL_OPTIONS=-Xmx1g
+    ports:
+      - 8080:8080
+    volumes:
+      - %HOME%/.docker/ubooquity:/config
+      - %MEDIA%/books:/books
+      - %MEDIA%/comics:/comics
+      - /volume1/downloads/piano:/piano
+    restart: unless-stopped

@@ -1,5 +1,7 @@
-# Ignore everything in root directory
-/*
+# Ignore most root stuff
+/.*
+!/.bin/
+/home/
 
 # Ignore configuration files in docker directory
 /docker/docker-compose.yml

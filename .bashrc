@@ -22,4 +22,3 @@ alias docker='sudo docker'
 alias docker-compose='sudo docker-compose'
 alias du='du -h'
 alias ls='ls --color=auto -h'
-

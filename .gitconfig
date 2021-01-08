@@ -16,4 +16,3 @@
 	hist   = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
 	lgg    = !git log --graph --decorate=short --abbrev-commit --numstat --date=relative -4
 	st     = status --short --branch
-

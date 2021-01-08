@@ -1,8 +1,36 @@
-version: '2'
+version: "2.4"
 services:
 
+  heimdall:
+    # https://hub.docker.com/r/linuxserver/heimdall
+    image: ghcr.io/linuxserver/heimdall
+    container_name: heimdall
+    hostname: heimdall
+    env_file:
+      - tz.env
+      - ids.env
+    volumes:
+      - %HOME%/.docker/heimdall:/config
+    ports:
+      - 9080:80
+      - 9443:443
+    restart: unless-stopped
+
+  portainer:
+    # https://hub.docker.com/r/portainer/portainer-ce
+    image: portainer/portainer-ce
+    container_name: portainer
+    hostname: portainer
+    ports:
+      - 8000:8000
+      - 9000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - %HOME%/.docker/portainer:/data
+    restart: unless-stopped
+
   sslh:
-    # https://hub.docker.com/r/riftbit/sslh/
+    # https://hub.docker.com/r/riftbit/sslh
     image: riftbit/sslh
     container_name: sslh
     hostname: sslh
@@ -10,4 +38,3 @@ services:
     env_file:
       - sslh.env
     restart: unless-stopped
-

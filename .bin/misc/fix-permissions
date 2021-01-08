@@ -1,0 +1,28 @@
+#!/bin/sh
+home="${1:-$HOME}" user="${2:-$USER}"
+
+# Remove @eaDir directories
+find "$home" -depth -name @eaDir -type d -exec rm -rf '{}' \;
+find /volume1/media -depth -name @eaDir -type d -exec rm -rf '{}' \;
+
+# Reset home default permissions
+chown -R "$user:users" "$home"
+synoacltool -copy "$home/.." "$home"
+synoacltool -del "$home"
+synoacltool -add "$home" 'user:root:allow:rwxpdDaARWcCo:---n'
+synoacltool -add "$home" "user:$user:allow:rwxpdDaARWcCo:fd--"
+
+# Enforce home permissions (skipping .docker directory)
+find "$home" -mindepth 1 \( -path "$home/.docker" -type d -prune -o -type d -exec synoacltool -enforce-inherit '{}' \; \)
+find "$home" -path "$home/.docker" -type d -prune -o -not -type d -exec synoacltool -enforce-inherit '{}' \;
+
+# Set right permissions on .ssh directory in order to allow SSH keys authentication
+[[ -d "$home/.ssh" ]] && chmod 755 "$home"
+[[ -d "$home/.ssh" ]] && chmod -R a-x,u=rwX,go=rX "$home/.ssh"
+[[ -f "$home/.ssh/authorized_keys" ]] && chmod go-r "$home/.ssh/authorized_keys"
+[[ -f "$home/.ssh/id_rsa" ]] && chmod go-r "$home/.ssh/id_rsa"
+[[ -f "$home/.ssh/id_rsa.ppk" ]] && chmod go-r "$home/.ssh/id_rsa.ppk"
+
+# Set right permissions on .docker directory
+[[ -d "$home/.docker" ]] && chmod -R a-x,u=rwX,go=rX "$home/.docker"
+[[ -d "$home/.docker/plex/Library" ]] && chown root:root "$home/.docker/plex/Library"

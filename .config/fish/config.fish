@@ -6,4 +6,3 @@ for path in $paths
 		end
 	end
 end
-

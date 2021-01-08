@@ -1,8 +1,10 @@
 #!/bin/sh
 
-LOG="$HOME/.log/nas.log"
+. ~/.bin/misc/throw
 
-mkdir -p "$HOME/.log"
+LOG=~/.log/nas.log
+
+mkdir -p ~/.log
 echo -e "*** $(date) Start ***\n" > "$LOG"
 
 function end {
@@ -10,23 +12,17 @@ function end {
 }
 trap end EXIT
 
-function throw {
-	local message="$1"
-	echo -e "\e[31m$message\e[39m" >&2
-	exit 1
-}
-
 function execute {
 	local message="$1" command="$2"
 	echo -n "$message... "
 	echo "*** $message..." >> "$LOG"
 	local errorMessage
 	errorMessage="$(eval "sudo $command 2>&1" | tee -a "$LOG"; (exit ${PIPESTATUS[0]}))"
-	if [[ $? -ne 0 ]]; then
-		echo 'failed' | tee -a "$LOG"
+	if [[ $? != 0 ]]; then
+		echo failed | tee -a "$LOG"
 		throw "$errorMessage"
 	fi
-	echo 'done' | tee -a "$LOG"
+	echo done | tee -a "$LOG"
 	return 0
 }
 
@@ -36,28 +32,27 @@ function patch {
 	echo "*** Patching file $file..." >> "$LOG"
 	local errorMessage
 	errorMessage="$(eval "sudo patch -N --dry-run \"$file\" < \"$patch\" 2>&1" | tee -a "$LOG"; (exit ${PIPESTATUS[0]}))"
-	if [[ $? -ne 0 ]]; then
+	if [[ $? != 0 ]]; then
 		if [[ -z "$(echo "$errorMessage" | grep 'Skipping patch.')" ]]; then
-			echo 'failed' | tee -a "$LOG"
+			echo failed | tee -a "$LOG"
 			throw "$errorMessage"
 		fi
-		echo "skipped" | tee -a "$LOG"
+		echo skipped | tee -a "$LOG"
 		return 1
 	fi
 	eval "sudo patch -N \"$file\" < \"$patch\" 2>&1" >> "$LOG"
-	echo "done" | tee -a "$LOG"
+	echo done | tee -a "$LOG"
 	return 0
 }
 
 function processEntwareNg {
 	# https://github.com/Entware/Entware-ng/wiki/Install-on-Synology-NAS
-	sudo mkdir -p /volume1/@entware-ng/opt
-	sudo mkdir -p /opt
+	sudo mkdir -p /volume1/@entware-ng/opt /opt
 	grep -qs ' /opt ' /proc/mounts || sudo mount -o bind /volume1/@entware-ng/opt /opt
 
 	if [[ -z "$(ls -A /volume1/@entware-ng/opt)" ]]; then
-		execute 'Installing Entware-ng' 'install-entware'
-		sudo cp "$HOME/.bin/entware-startup.sh" /usr/local/etc/rc.d/
+		execute 'Installing Entware-ng' "$HOME/.bin/entware/install"
+		sudo cp ~/.bin/entware/entware-startup.sh /usr/local/etc/rc.d/
 		echo '*** Please reboot the nas ***' | tee -a "$LOG"
 		exit
 	fi
@@ -73,10 +68,13 @@ function processEntwareNg {
 sudo true || throw 'Permission denied'
 
 processEntwareNg
-#execute 'Fixing permissions' "fix-permissions \"$HOME\" \"$USER\""
+# execute 'Fixing permissions' "$HOME/.bin/misc/fix-permissions \"$HOME\" \"$USER\""
 patch /etc/ssh/sshd_config sshd_config.patch && echo '*** Please reboot the nas ***' | tee -a "$LOG"
+
+execute 'Upgrading bash git completion' "$HOME/.bin/misc/upgrade-git-completion.sh \"$HOME\""
+execute 'Upgrading bash docker completion' "$HOME/.bin/misc/upgrade-docker-completion.sh \"$HOME\""
+
 execute 'Upgrading docker containers' 'docker-upgrade docker'
 execute 'Upgrading media containers' 'docker-upgrade media'
 execute 'Restarting plex container' 'docker restart plex'
 execute 'Pruning docker images' 'docker image prune --force'
-

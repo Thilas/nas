@@ -9,4 +9,3 @@ case $1 in
 	stop)
 		;;
 esac
-

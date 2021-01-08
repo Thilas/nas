@@ -1,30 +1,19 @@
 #!/bin/sh
+name="$1" service="$2"
 
-if [[ -z "$1" ]]; then
-	>&2 echo 'Directory expected'
-	exit 1
-fi
 cd "$(dirname "$(readlink -f "$0")")"
+. misc/throw
 
-if [[ ! -d "../$1" ]]; then
-	>&2 echo "$1: directory not found"
-	exit 1
-fi
-cd "../$1"
+[[ -z "$name" ]] && throw 'name expected'
+[[ -d "../$name" ]] || throw "$name: directory not found"
+cd "../$name"
 
-if [[ ! -f docker-compose.yml ]]; then
-	>&2 echo "File docker-compose.yml does not exist. Please run 'configure' first."
-	exit 1
-fi
+[[ -f docker-compose.yml ]] || throw "docker-compose.yml does not exist, run 'configure' script first"
 
-if [[ -z "$(synopkg version Docker)" ]]; then
-	>&2 echo 'You must install Docker package first.'
-	exit 1
-fi
+which docker-compose > /dev/null || throw 'docker-compose: command not found'
 
-sudo docker-compose pull $2
+sudo docker-compose pull $service
 echo
-sudo docker-compose build --pull $2
+sudo docker-compose build --pull $service
 echo
-sudo docker-compose up -d $2
-
+sudo docker-compose up -d $service
