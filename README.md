@@ -5,23 +5,23 @@ This repository contains a bunch of scripts to help configure, maintain and oper
 ## Features
 
 - Provide `.bashrc` and `.profile` configuration
-- Install [Entware-ng](https://entware.net/)
-- Install [fish](https://fishshell.com/) with its configuration
+- Install [Entware-ng](https://entware.net/), a software repository for network attached storages, routers and other embedded devices
+- Install [fish](https://fishshell.com/), a smart and user-friendly command line shell
 - Change some permissions
   - Allow to use SSH keys
 - Change default OpenSSH server configuration
   - Deny root and admin login
   - Allow TCP forwarding
-- Install [Heimdall](https://github.com/linuxserver/Heimdall) ([docker](https://hub.docker.com/r/linuxserver/heimdall), [service](http://nassau:9080/))
-- Install [Portainer](https://github.com/portainer/portainer) ([docker](https://hub.docker.com/r/portainer/portainer-ce), [service](http://nassau:9000/))
-- Install [SSLH](https://github.com/yrutschle/sslh) ([docker](https://hub.docker.com/r/oorabona/sslh), [service](https://nassau:44322/))
-- Install [Plex](https://www.plex.tv/) ([docker](https://hub.docker.com/r/plexinc/pms-docker), [service](http://nassau:32400/), [web](https://app.plex.tv/))
-- Install [Plex Webhook for BetaSeries](https://github.com/Thilas/plex-betaseries-webhook) ([docker](https://hub.docker.com/r/thilas/plex-betaseries-webhook), [service](http://nassau:12000/))
-- Install [Tautulli](https://github.com/Tautulli/Tautulli) ([docker](https://hub.docker.com/r/tautulli/tautulli), [service](http://nassau:8181/))
-- Install [Medusa](https://github.com/pymedusa/Medusa) ([docker](https://hub.docker.com/r/linuxserver/medusa), [service](http://nassau:8081/))
-- Install [Radarr](https://github.com/Radarr/Radarr) ([docker](https://hub.docker.com/r/linuxserver/radarr), [service](http://nassau:7878/))
-- Install [Ubooquity](http://vaemendis.net/ubooquity/) ([docker](https://hub.docker.com/r/linuxserver/ubooquity), [service](http://nassau:2202/), [administration](http://nassau:2203/admin/))
-- Install [Komga](https://github.com/gotson/komga) ([docker](https://hub.docker.com/r/gotson/komga), [service](http://nassau:8080/))
+- Install [Heimdall](https://github.com/linuxserver/Heimdall) ([docker](https://hub.docker.com/r/linuxserver/heimdall), [service](http://nassau:9080/)), an application dashboard and launcher
+- Install [Portainer](https://github.com/portainer/portainer) ([docker](https://hub.docker.com/r/portainer/portainer-ce), [service](http://nassau:9000/)), a lightweight management UI which allows to easily manage your different Docker environments
+- Install [SSLH](https://github.com/yrutschle/sslh) ([docker](https://hub.docker.com/r/oorabona/sslh), [service](https://nassau:44322/)), an applicative protocol multiplexer
+- Install [Plex](https://www.plex.tv/) ([docker](https://hub.docker.com/r/plexinc/pms-docker), [service](http://nassau:32400/), [web](https://app.plex.tv/)), brings together all the media that matters to you
+- Install [Plex Webhook for BetaSeries](https://github.com/Thilas/plex-betaseries-webhook) ([docker](https://hub.docker.com/r/thilas/plex-betaseries-webhook), [service](http://nassau:12000/)), a Plex webhook to mark series and movies as watched on BetaSeries
+- Install [Tautulli](https://github.com/Tautulli/Tautulli) ([docker](https://hub.docker.com/r/tautulli/tautulli), [service](http://nassau:8181/)), a Python based monitoring and tracking tool for Plex Media Server
+- Install [Medusa](https://github.com/pymedusa/Medusa) ([docker](https://hub.docker.com/r/linuxserver/medusa), [service](http://nassau:8081/)), an automatic video library manager for TV shows
+- Install [Radarr](https://github.com/Radarr/Radarr) ([docker](https://hub.docker.com/r/linuxserver/radarr), [service](http://nassau:7878/)), a fork of Sonarr to work with movies à la CouchPotato
+- Install [Ubooquity](http://vaemendis.net/ubooquity/) ([docker](https://hub.docker.com/r/linuxserver/ubooquity), [service](http://nassau:2202/), [administration](http://nassau:2203/admin/)), a free home server for your comics and ebooks library
+- Install [Komga](https://github.com/gotson/komga) ([docker](https://hub.docker.com/r/gotson/komga), [service](http://nassau:8080/)), a media server for comics/mangas/BDs with API and OPDS support
 
 ## Scripts
 

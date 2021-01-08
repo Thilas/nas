@@ -33,6 +33,7 @@ echo "SSLH_OPTS=-p 0.0.0.0:$listeningPort --ssh $sshHost:$sshPort --tls $httpsHo
 
 . ~/.bin/docker/configure
 
+echo
 echo 'Creating missing directories...'
 for directory in portainer heimdall; do
 	sudo -u "$user" -- mkdir -p "$homePath/.docker/$directory"
