@@ -45,10 +45,11 @@ filter Get-FileEncoding {
   }
 }
 
-$Cached = if ($Cache -and (Test-Path $Cache)) {
-  Get-Content $Cache | ConvertFrom-Json -AsHashtable
-} else {
-  @{ }
+$Cached = @{ }
+if ($Cache -and (Test-Path $Cache)) {
+  Get-Content $Cache | ConvertFrom-Json | ForEach-Object {
+    $Cached.$_ = $true
+  }
 }
 
 Get-ChildItem -Path $Path -Include "*.srt" -Recurse -File `
@@ -74,6 +75,6 @@ Get-ChildItem -Path $Path -Include "*.srt" -Recurse -File `
   }
 }
 
-if (!$WhatIfPreference -and $Cache -and $Cached.Count) {
-  $Cached | ConvertTo-Json | Set-Content -Path $Cache
+if (!$WhatIfPreference -and $Cache) {
+  $Cached.Keys | Sort-Object | ConvertTo-Json -AsArray | Set-Content -Path $Cache
 }
