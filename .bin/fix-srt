@@ -1,5 +1,6 @@
 #!/bin/sh
-path="$(readlink -f "$1")"
+path="$(readlink -f "$1")" && shift && args="$@"
+# e.g. -Debug -WhatIf
 
 cd "$(dirname "$(readlink -f "$0")")"
 . misc/throw
@@ -16,5 +17,4 @@ sudo docker run -it --rm \
   -v "$PWD/../.cache:/mnt/cache" \
   -v "$path:$path" \
   mcr.microsoft.com/powershell \
-  pwsh -File /mnt/bin/fix-srt.ps1 -Path "$path" -Cache /mnt/cache/fix-srt.json
-# -Debug -WhatIf
+  pwsh -File /mnt/bin/fix-srt.ps1 -Path "$path" -Cache /mnt/cache/fix-srt.json $args

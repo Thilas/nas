@@ -6,7 +6,7 @@ log() {
 }
 
 show() {
-	local title="$1" messages="${@:2}"
+	local title="$1" && shift && local messages="$@"
 	[ -n "$LOG" ] && echo -e "\e[35m$title\e[39m" "$messages" | tee -a "$LOG" || echo "$title" "$messages"
 }
 
