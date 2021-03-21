@@ -8,6 +8,7 @@ cd "$(dirname "$(readlink -f "$0")")"
 [ -d "$path" ] || throw "$path: directory not found"
 
 mkdir -p "$PWD/../.cache"
+[ -f "$PWD/../.cache/fix-srt.json" ] || touch "$PWD/../.cache/fix-srt.json"
 
 sudo docker run -it --rm \
   -e POWERSHELL_TELEMETRY_OPTOUT=1 \
@@ -15,5 +16,5 @@ sudo docker run -it --rm \
   -v "$PWD/../.cache:/mnt/cache" \
   -v "$path:$path" \
   mcr.microsoft.com/powershell \
-  pwsh -File /mnt/bin/fix-srt.ps1 -Path "$path" -Cache /mnt/cache/fix-srt
+  pwsh -File /mnt/bin/fix-srt.ps1 -Path "$path" -Cache /mnt/cache/fix-srt.json
 # -Debug -WhatIf
