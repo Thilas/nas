@@ -3,12 +3,12 @@
 cd "$(dirname "$(readlink -f "$0")")"
 . ~/.bin/misc/throw
 
-function readValue {
+readValue() {
 	local prompt="$1" default="$2" variable="$3" pattern="${4:-.+}"
-	[[ -f sslh.env ]] && current="$(grep "^# $prompt: " sslh.env | cut -d' ' -f4)" || current=
+	[ -f sslh.env ] && current="$(grep "^# $prompt: " sslh.env | cut -d' ' -f4)" || current=
 	read -p "$prompt: " -i "${current:-$default}" -e $variable
 	value="$(echo "${!variable}" | egrep "^$pattern$")"
-	[[ -z "$value" ]] && throw "Invalid value: \"${!variable}\""
+	[ -z "$value" ] && throw "Invalid value: \"${!variable}\""
 }
 portPattern='[1-9][0-9]{0,4}'
 

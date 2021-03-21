@@ -4,7 +4,10 @@ param(
   [ValidateNotNullOrEmpty()]
   [SupportsWildcards()]
   [string[]]
-  $Path = $PWD
+  $Path = $PWD,
+  [Parameter(Position=1)]
+  [string]
+  $Cache
 )
 
 filter Get-FileEncoding {
@@ -42,20 +45,35 @@ filter Get-FileEncoding {
   }
 }
 
+$Cached = if ($Cache -and (Test-Path $Cache)) {
+  Get-Content $Cache | ConvertFrom-Json -AsHashtable
+} else {
+  @{ }
+}
+
 Get-ChildItem -Path $Path -Include "*.srt" -Recurse -File `
 | ForEach-Object {
-  $encoding = $_ | Get-FileEncoding
-  $content  = $_ | Get-Content -Raw -Encoding $encoding
-  $content -match "(?m)(\r?\n)?(\r?\n)?\z" | Out-Null
-  if ($Matches.2) {
-    "$_ is OK" | Write-Debug
+  if ($Cached[$_.FullName]) {
+    "Skipping $_" | Write-Debug
   } else {
-    $missing = if ($Matches.1) { 1 } else { 2 }
-    $newline = if ($content -match "(?m)[^\r]\n") { "LF" } else { "CRLF" }
-    "Fixing $_ ($newline)..."
-    $newline = if ($newline -eq "LF") { "`n" } else { "`r`n" }
-    if (!$WhatIfPreference) {
-      $_ | Add-Content -Value ($newline * $missing) -NoNewline
+    $encoding = $_ | Get-FileEncoding
+    $content  = $_ | Get-Content -Raw -Encoding $encoding
+    $content -match "(?m)(\r?\n)?(\r?\n)?\z" | Out-Null
+    if ($Matches.2) {
+      "$_ is OK" | Write-Debug
+    } else {
+      $missing = if ($Matches.1) { 1 } else { 2 }
+      $newline = if ($content -match "(?m)[^\r]\n") { "LF" } else { "CRLF" }
+      "Fixing $_ ($newline)..."
+      $newline = if ($newline -eq "LF") { "`n" } else { "`r`n" }
+      if (!$WhatIfPreference) {
+        $_ | Add-Content -Value ($newline * $missing) -NoNewline
+      }
     }
+    $Cached[$_.FullName] = $true
   }
+}
+
+if (!$WhatIfPreference -and $Cache -and $Cached.Count) {
+  $Cached | ConvertTo-Json | Set-Content -Path $Cache
 }

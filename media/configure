@@ -3,7 +3,7 @@
 cd "$(dirname "$(readlink -f "$0")")"
 . ~/.bin/misc/throw
 
-if [[ -f betaseries.env ]]; then
+if [ -f betaseries.env ]; then
 	currentPlexWebhook="$(grep '^SERVER_URL=' betaseries.env | cut -d'=' -f2)"
 	currentBetaseriesClientId="$(grep '^BETASERIES_CLIENTID=' betaseries.env | cut -d'=' -f2)"
 	currentBetaseriesClientSecret="$(grep '^BETASERIES_CLIENTSECRET=' betaseries.env | cut -d'=' -f2)"
@@ -13,12 +13,12 @@ fi
 read -p 'Plex webhook for BetaSeries: ' -i "$currentPlexWebhook" -e plexWebhook
 read -p 'BetaSeries client id: ' -i "$currentBetaseriesClientId" -e betaseriesClientId
 read -p 'BetaSeries client secret: ' -i "$currentBetaseriesClientSecret" -e betaseriesClientSecret
-if [[ -z "$plexWebhook" ]] || [[ -z "$betaseriesClientId" ]] || [[ -z "$betaseriesClientSecret" ]]; then
+if [ -z "$plexWebhook" ] || [ -z "$betaseriesClientId" ] || [ -z "$betaseriesClientSecret" ]; then
 	throw 'invalid plex webhook for betaseries'
 fi
 
 read -p 'Media path: ' -i /volume1/media -e mediaPath
-[[ -d "$mediaPath" ]] || throw "$mediaPath: media path does not exist"
+[ -d "$mediaPath" ] || throw "$mediaPath: media path does not exist"
 
 . ~/.bin/docker/configure-ids
 . ~/.bin/docker/configure-tz

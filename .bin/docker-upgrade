@@ -4,11 +4,11 @@ name="$1" service="$2"
 cd "$(dirname "$(readlink -f "$0")")"
 . misc/throw
 
-[[ -z "$name" ]] && throw 'name expected'
-[[ -d "../$name" ]] || throw "$name: directory not found"
+[ -z "$name" ] && throw 'name expected'
+[ -d "../$name" ] || throw "$name: directory not found"
 cd "../$name"
 
-[[ -f docker-compose.yml ]] || throw "docker-compose.yml does not exist, run 'configure' script first"
+[ -f docker-compose.yml ] || throw "docker-compose.yml does not exist, run 'configure' script first"
 
 which docker-compose > /dev/null || throw 'docker-compose: command not found'
 

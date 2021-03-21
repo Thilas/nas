@@ -7,18 +7,18 @@ LOG=~/.log/nas.log
 mkdir -p ~/.log
 echo -e "*** $(date) Start ***\n" > "$LOG"
 
-function end {
+end() {
 	echo -e "\n*** $(date) End ***" >> "$LOG"
 }
 trap end EXIT
 
-function execute {
+execute() {
 	local message="$1" command="$2"
 	echo -n "$message... "
 	echo "*** $message..." >> "$LOG"
 	local errorMessage
 	errorMessage="$(eval "sudo $command 2>&1" | tee -a "$LOG"; (exit ${PIPESTATUS[0]}))"
-	if [[ $? != 0 ]]; then
+	if [ $? -ne 0 ]; then
 		echo failed | tee -a "$LOG"
 		throw "$errorMessage"
 	fi
@@ -26,14 +26,14 @@ function execute {
 	return 0
 }
 
-function patch {
+patch() {
 	local file="$1" patch="$HOME/.config/$2"
 	echo -n "Patching file $file... "
 	echo "*** Patching file $file..." >> "$LOG"
 	local errorMessage
 	errorMessage="$(eval "sudo patch -N --dry-run \"$file\" < \"$patch\" 2>&1" | tee -a "$LOG"; (exit ${PIPESTATUS[0]}))"
-	if [[ $? != 0 ]]; then
-		if [[ -z "$(echo "$errorMessage" | grep 'Skipping patch.')" ]]; then
+	if [ $? -ne 0 ]; then
+		if [ -z "$(echo "$errorMessage" | grep 'Skipping patch.')" ]; then
 			echo failed | tee -a "$LOG"
 			throw "$errorMessage"
 		fi
@@ -45,12 +45,12 @@ function patch {
 	return 0
 }
 
-function processEntwareNg {
+processEntwareNg() {
 	# https://github.com/Entware/Entware-ng/wiki/Install-on-Synology-NAS
 	sudo mkdir -p /volume1/@entware-ng/opt /opt
 	grep -qs ' /opt ' /proc/mounts || sudo mount -o bind /volume1/@entware-ng/opt /opt
 
-	if [[ -z "$(ls -A /volume1/@entware-ng/opt)" ]]; then
+	if [ -z "$(ls -A /volume1/@entware-ng/opt)" ]; then
 		execute 'Installing Entware-ng' "$HOME/.bin/entware/install"
 		sudo cp ~/.bin/entware/entware-startup.sh /usr/local/etc/rc.d/
 		echo '*** Please reboot the nas ***' | tee -a "$LOG"

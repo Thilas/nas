@@ -4,10 +4,10 @@
 
 echo
 
-[[ -f tz.env ]] && currentTimezone="$(grep '^TZ=' tz.env | cut -d'=' -f2)" || currentTimezone=
+[ -f tz.env ] && currentTimezone="$(grep '^TZ=' tz.env | cut -d'=' -f2)" || currentTimezone=
 currentTimezone="${currentTimezone:-$(find /usr/share/zoneinfo -type f ! -name posixrules -exec cmp -s {} /etc/localtime \; -print | sed -e 's@.*/zoneinfo/@@' | head -n1)}"
 read -p 'Timezone: ' -i "$currentTimezone" -e timezone
-[[ -f "/usr/share/zoneinfo/$timezone" ]] || throw "$timezone: no such timezone"
+[ -f "/usr/share/zoneinfo/$timezone" ] || throw "$timezone: no such timezone"
 
 echo
 echo 'Writing tz.env...'

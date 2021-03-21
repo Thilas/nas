@@ -1,4 +1,5 @@
-function throw {
+#!/bin/sh
+throw() {
 	local message="${1:-Unexpected error}" status=${2:-1}
 	echo -e "\e[31m$message\e[39m" >&2
 	exit $status
