@@ -17,4 +17,4 @@ sudo docker run -it --rm \
   -v "$PWD/../.cache:/mnt/cache" \
   -v "$path:$path" \
   mcr.microsoft.com/powershell \
-  pwsh -File /mnt/bin/fix-srt.ps1 -Path "$path" -Cache /mnt/cache/fix-srt.json $args
+  pwsh -File /mnt/bin/media/fix-srt.ps1 -Path "$path" -Cache /mnt/cache/fix-srt.json $args

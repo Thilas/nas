@@ -29,6 +29,16 @@ This repository contains a bunch of scripts to help configure, maintain and oper
 
 Each docker directory (`~/docker` and `~/media`) has a `configure` script that allows to configure the related `docker-compose.yml` file. It must be run once before starting the containers. They can be started using `nas` script (see below) or `docker-upgrade [docker|media]`
 
+### `fix-plex-transcoder`
+
+`fix-plex-transcoder` grants the required rights on `/dev/dri` for Plex [Hardware-Accelerated Streaming](https://support.plex.tv/articles/115002178853-using-hardware-accelerated-streaming/) feature to work correctly.
+
+This script must be triggered from DSM Task Scheduler on boot-up using the `root` account in order to restore the permissions after a reboot.
+
+### `fix-srt`
+
+`fix-srt` allows to fix `.srt` subtitle files so they work correctly with Plex. Basically, it ensures that all files end with at least 2 empty lines.
+
 ### `nas`
 
 `nas` installs/upgrades/fixes/starts all features mentioned above. Logs are available in `~/.log/nas.log`.
@@ -53,3 +63,5 @@ This `media` directory is customizable (thanks to the `configure` script) but it
 - [Install on Synology NAS](https://github.com/Entware/Entware-ng/wiki/Install-on-Synology-NAS)
 - [SSH Key Authentication](https://help.ubuntu.com/community/SSH/OpenSSH/Keys)
 - [How to Control Synology DSM Services via Terminal / SSH](https://tech.setepontos.com/2018/03/25/control-synology-dsm-services-via-terminal-ssh/)
+- [Plex on Docker on Synology: enabling Hardware Transcoding](https://medium.com/@MrNick4B/plex-on-docker-on-synology-enabling-hardware-transcoding-fa017190cad7)
+- [SRT subtitles on Chromecast constistently disappear a few minutes before the movie end](https://forums.plex.tv/t/srt-subtitles-on-chromecast-constistently-disappear-a-few-minutes-before-the-movie-end/510491/36)

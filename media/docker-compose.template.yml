@@ -10,6 +10,8 @@ services:
       - plex-betaseries-webhook
     network_mode: host
     mem_limit: 3g
+    devices:
+      - /dev/dri:/dev/dri
     env_file:
       - tz.env
     environment:
