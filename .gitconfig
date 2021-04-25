@@ -10,6 +10,7 @@
 	amend  = commit --all --amend --no-edit
 	co     = checkout
 	cob    = !git checkout -b $1 && git push --set-upstream origin
+	main   = !git checkout main && git status --short --branch
 	master = !git checkout master && git status --short --branch
 	cp     = cherry-pick
 	has    = branch --all --contains
