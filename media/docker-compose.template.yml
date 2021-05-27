@@ -134,9 +134,13 @@ services:
     user: %UID%:%GID%
     env_file:
       - tz.env
-    # environment:
-    #   # Set the maximum memory
-    #   - JAVA_TOOL_OPTIONS=-Xmx1g
+    environment:
+      # Activate the remember-me auto-login via cookies
+      - KOMGA_REMEMBERME_KEY=<key>
+      # Validity of the cookie in seconds
+      - KOMGA_REMEMBERME_VALIDITY=2678400
+      # Set the maximum memory
+      # - JAVA_TOOL_OPTIONS=-Xmx1g
     ports:
       - 8080:8080
     volumes:

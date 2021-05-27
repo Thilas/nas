@@ -20,6 +20,17 @@ fi
 read -p 'Media path: ' -i /volume1/media -e mediaPath
 [ -d "$mediaPath" ] || throw "$mediaPath: media path does not exist"
 
+echo
+if [ -f docker-compose.yml ]; then
+	currentKomgaRememberMeKey="$(grep 'KOMGA_REMEMBERME_KEY=' docker-compose.yml | cut -d'=' -f2)"
+else
+	currentKomgaRememberMeKey=
+fi
+read -p 'Komga remember-me key: ' -i "$currentKomgaRememberMeKey" -e komgaRememberMeKey
+if [ -z "$komgaRememberMeKey" ]; then
+	throw 'invalid plex webhook for betaseries'
+fi
+
 . ~/.bin/docker/configure-ids
 . ~/.bin/docker/configure-tz
 
