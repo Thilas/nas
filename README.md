@@ -20,7 +20,6 @@ This repository contains a bunch of scripts to help configure, maintain and oper
 - Install [Tautulli](https://github.com/Tautulli/Tautulli) ([docker](https://hub.docker.com/r/tautulli/tautulli), [service](http://nassau:8181/)), a Python based monitoring and tracking tool for Plex Media Server
 - Install [Medusa](https://github.com/pymedusa/Medusa) ([docker](https://hub.docker.com/r/linuxserver/medusa), [service](http://nassau:8081/)), an automatic video library manager for TV shows
 - Install [Radarr](https://github.com/Radarr/Radarr) ([docker](https://hub.docker.com/r/linuxserver/radarr), [service](http://nassau:7878/)), a fork of Sonarr to work with movies à la CouchPotato
-- Install [Ubooquity](http://vaemendis.net/ubooquity/) ([docker](https://hub.docker.com/r/linuxserver/ubooquity), [service](http://nassau:2202/), [administration](http://nassau:2203/admin/)), a free home server for your comics and ebooks library
 - Install [Komga](https://github.com/gotson/komga) ([docker](https://hub.docker.com/r/gotson/komga), [service](http://nassau:8080/)), a media server for comics/mangas/BDs with API and OPDS support
 
 ## Scripts
@@ -51,7 +50,7 @@ This script must be triggered from DSM Task Scheduler on boot-up using the `root
 
 ## Media
 
-By default, all media services (Plex, Plex Webhook for BetaSeries, Tautulli, Medusa, Radarr and Ubooquity) use the following locations:
+By default, all media services (Plex, Plex Webhook for BetaSeries, Tautulli, Medusa, Radarr and Komga) use the following locations:
 
 - `~/.docker`: contains the configuration of each service
 - `/volume1/media`: contains all media files (i.e. `books`, `comics`, `movies`, `music`, `tvshows`)
