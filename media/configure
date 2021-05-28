@@ -1,57 +1,21 @@
 #!/bin/sh
 
 cd "$(dirname "$(readlink -f "$0")")"
-. ~/.bin/misc/throw
+. ../.bin/misc/throw
 
-if [ -f betaseries.env ]; then
-	currentPlexWebhook="$(grep '^SERVER_URL=' betaseries.env | cut -d'=' -f2)"
-	currentBetaseriesClientId="$(grep '^BETASERIES_CLIENTID=' betaseries.env | cut -d'=' -f2)"
-	currentBetaseriesClientSecret="$(grep '^BETASERIES_CLIENTSECRET=' betaseries.env | cut -d'=' -f2)"
-else
-	currentPlexWebhook= currentBetaseriesClientId= currentBetaseriesClientSecret=
-fi
-read -p 'Plex webhook for BetaSeries: ' -i "$currentPlexWebhook" -e plexWebhook
-read -p 'BetaSeries client id: ' -i "$currentBetaseriesClientId" -e betaseriesClientId
-read -p 'BetaSeries client secret: ' -i "$currentBetaseriesClientSecret" -e betaseriesClientSecret
-if [ -z "$plexWebhook" ] || [ -z "$betaseriesClientId" ] || [ -z "$betaseriesClientSecret" ]; then
-	throw 'invalid plex webhook for betaseries'
-fi
+[ -f .env ] || echo -e "cat <<END_OF_TEXT\n$(cat .env.template)\nEND_OF_TEXT" | sh > .env
 
-read -p 'Media path: ' -i /volume1/media -e mediaPath
-[ -d "$mediaPath" ] || throw "$mediaPath: media path does not exist"
+read -p 'Finalize configuration? [y/N] ' -e 'answer'
+[ "$answer" == 'y' ] || throw "Configuration aborted"
 
-echo
-if [ -f docker-compose.yml ]; then
-	currentKomgaRememberMeKey="$(grep 'KOMGA_REMEMBERME_KEY=' docker-compose.yml | cut -d'=' -f2)"
-else
-	currentKomgaRememberMeKey=
-fi
-read -p 'Komga remember-me key: ' -i "$currentKomgaRememberMeKey" -e komgaRememberMeKey
-if [ -z "$komgaRememberMeKey" ]; then
-	throw 'invalid plex webhook for betaseries'
-fi
+. .env
 
-. ~/.bin/docker/configure-ids
-. ~/.bin/docker/configure-tz
-
-echo
-echo 'Writing betaseries.env...'
-echo '# Plex webhook for BetaSeries configuration' > betaseries.env
-echo "SERVER_URL=$plexWebhook" >> betaseries.env
-echo "BETASERIES_CLIENTID=$betaseriesClientId" >> betaseries.env
-echo "BETASERIES_CLIENTSECRET=$betaseriesClientSecret" >> betaseries.env
-
-. ~/.bin/docker/configure
-sed -i -e "s|%MEDIA%|$mediaPath|g" docker-compose.yml
-
-echo
 echo 'Creating missing directories...'
-for directory in plex medusa radarr tautulli ubooquity komga; do
-	sudo -u "$user" -- mkdir -p "$homePath/.docker/$directory"
+for directory in plex medusa radarr tautulli komga; do
+	sudo -u "$UID" -- mkdir -p "$CONFIG/$directory"
 done
 for directory in books comics downloads/movies downloads/tvshows movies music tvshows; do
-	sudo -u "$user" -- mkdir -p "$mediaPath/$directory"
+	sudo -u "$UID" -- mkdir -p "$MEDIA/$directory"
 done
 
-echo
 echo 'Containers configured successfully'
