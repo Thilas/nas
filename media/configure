@@ -15,7 +15,7 @@ for directory in plex medusa radarr tautulli komga; do
 	sudo -u "#$PUID" -- mkdir -p "$CONFIG/$directory"
 done
 for directory in books comics downloads/movies downloads/tvshows movies music tvshows; do
-	sudo -u "#$PUID" -- mkdir -p "$MEDIA/$directory"
+	sudo -u "#$PUID" -- mkdir -p "$DATA/$directory"
 done
 
 echo 'Containers configured successfully'
