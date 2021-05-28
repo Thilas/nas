@@ -8,7 +8,7 @@ cd "$(dirname "$(readlink -f "$0")")"
 read -p 'Finalize configuration? [y/N] ' -e 'answer'
 [ "$answer" == 'y' ] || throw "Configuration aborted"
 
-. .env
+. ./.env
 
 echo 'Creating missing directories...'
 for directory in plex medusa radarr tautulli komga; do
