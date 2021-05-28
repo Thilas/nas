@@ -9,12 +9,12 @@ services:
     # mem_limit: 3g
     devices:
       - /dev/dri:/dev/dri
-    env_file:
-      - tz.env
-      - ids.env
-    # environment:
-    #   # Set the autodiscovery response domain or IP address.
-    #   # - JELLYFIN_PublishedServerUrl=<hostIPAddress>
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+      # Set the autodiscovery response domain or IP address.
+      # - JELLYFIN_PublishedServerUrl=<hostIPAddress>
     ports:
       # HTTP webUI
       - 8096:8096
@@ -25,10 +25,10 @@ services:
       # Service discovery used by DNLA and clients
       # - 1900:1900/udp
     volumes:
-      - /var/services/homes/thomas/.docker/jellyfin:/config
-      - /volume1/media/books:/data/books
-      - /volume1/media/comics:/data/comics
-      - /volume1/media/movies:/data/movies
-      - /volume1/media/music:/data/music
-      - /volume1/media/tvshows:/data/tvshows
+      - $CONFIG/jellyfin:/config
+      - $DATA/books:/data/books
+      - $DATA/comics:/data/comics
+      - $DATA/movies:/data/movies
+      - $DATA/music:/data/music
+      - $DATA/tvshows:/data/tvshows
     restart: unless-stopped
