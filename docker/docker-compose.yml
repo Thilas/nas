@@ -37,5 +37,5 @@ services:
     hostname: sslh
     network_mode: host
     environment:
-      - SSLH_OPTS=$SSLH_OPTS
+      - SSLH_OPTS=-p 0.0.0.0:$SSLH_PORT --ssh $SSLH_SSH_HOST:$SSLH_SSH_PORT --tls $SSLH_HTTPS_HOST:$SSLH_HTTPS_PORT
     restart: unless-stopped

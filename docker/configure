@@ -1,12 +1,7 @@
 #!/bin/sh
 
-cd "$(dirname "$(readlink -f "$0")")"
-. ../.bin/misc/throw
-
-[ -f .env ] || echo -e "cat <<END_OF_TEXT\n$(cat .env.template)\nEND_OF_TEXT" | sh > .env
-
-read -p 'Finalize configuration? [y/N] ' -e 'answer'
-[ "$answer" == 'y' ] || throw "Configuration aborted"
+cd "$(realpath "$0" | xargs dirname)"
+../.bin/docker/configure "$PWD" || return $?
 
 . ./.env
 

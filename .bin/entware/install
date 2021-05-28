@@ -2,7 +2,7 @@
 
 # https://github.com/Entware/Entware-ng/wiki/Install-on-Synology-NAS
 
-cd "$(dirname "$(readlink -f "$0")")"
+cd "$(realpath "$0" | xargs dirname)"
 . ../misc/throw
 
 hardware="$(uname -m)"

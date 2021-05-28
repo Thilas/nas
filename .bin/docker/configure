@@ -1,0 +1,12 @@
+#!/bin/sh
+source=$1
+
+cd "$(realpath "$0" | xargs dirname)"
+. ../misc/throw
+
+[ -f "$source/.env" ] && command -v diff &> /dev/null && diff -y "$source/.env.template" "$source/.env"
+[ -f "$source/.env" ] || echo -e "cat <<END_OF_TEXT\n$(cat "$source/.env.template")\nEND_OF_TEXT" | sh > "$source/.env"
+
+echo
+read -p 'Apply configuration? [y/N] ' -e 'answer'
+[ "$answer" == 'y' ] || throw "Configuration aborted"
