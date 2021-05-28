@@ -12,7 +12,7 @@ read -p 'Finalize configuration? [y/N] ' -e 'answer'
 
 echo 'Creating missing directories...'
 for directory in portainer heimdall; do
-	sudo -u "$UID" -- mkdir -p "$CONFIG/$directory"
+	sudo -u "$PUID" -- mkdir -p "$CONFIG/$directory"
 done
 
 echo 'Containers configured successfully'

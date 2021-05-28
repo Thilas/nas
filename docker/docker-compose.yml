@@ -8,8 +8,8 @@ services:
     hostname: heimdall
     environment:
       - TZ=$TZ
-      - PUID=$UID
-      - PGID=$GID
+      - PUID=$PUID
+      - PGID=$PGID
     volumes:
       - $CONFIG/heimdall:/config
     ports:

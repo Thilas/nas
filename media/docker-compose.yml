@@ -14,8 +14,8 @@ services:
       - /dev/dri:/dev/dri
     environment:
       - TZ=$TZ
-      - PLEX_UID=$UID
-      - PLEX_GID=$GID
+      - PLEX_UID=$PUID
+      - PLEX_GID=$PGID
       - PLEX_CLAIM=$PLEX_CLAIM
       - ADVERTISE_IP=$PLEX_ADVERTISE_IP
       - ALLOWED_NETWORKS=$PLEX_ALLOWED_NETWORKS
@@ -48,8 +48,8 @@ services:
       - plex
     environment:
       - TZ=$TZ
-      - PUID=$UID
-      - PGID=$GID
+      - PUID=$PUID
+      - PGID=$PGID
     ports:
       - 8181:8181
     volumes:
@@ -68,8 +68,8 @@ services:
     mem_limit: $MEDUSA_MEM_LIMIT
     environment:
       - TZ=$TZ
-      - PUID=$UID
-      - PGID=$GID
+      - PUID=$PUID
+      - PGID=$PGID
     ports:
       - 8081:8081
     volumes:
@@ -87,8 +87,8 @@ services:
       - plex
     environment:
       - TZ=$TZ
-      - PUID=$UID
-      - PGID=$GID
+      - PUID=$PUID
+      - PGID=$PGID
     ports:
       - 7878:7878
     volumes:
@@ -102,7 +102,7 @@ services:
     image: gotson/komga
     container_name: komga
     hostname: komga
-    user: $UID:$GID
+    user: $PUID:$PGID
     environment:
       - TZ=$TZ
       - JAVA_TOOL_OPTIONS=$KOMGA_JAVA_TOOL_OPTIONS
