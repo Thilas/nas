@@ -16,7 +16,7 @@ throw() {
 	exit 1
 }
 
-MEDIAHOME="$(dirname "$(readlink -f "$0")")/.."
+MEDIAHOME="$(realpath "$0" | xargs dirname)/.."
 MEDIAPATH="$MEDIAHOME/media/ids.env"
 [ -f "$MEDIAPATH" ] && MEDIAUSER="$(grep '^# User: ' "$MEDIAPATH" | cut -d' ' -f3)"
 [ -z "$MEDIAUSER" ] && throw 'Run ~/media/configure first'

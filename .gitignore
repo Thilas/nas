@@ -4,9 +4,7 @@
 /home/
 
 # Ignore configuration files in docker directory
-/docker/docker-compose.yml
-/docker/*.env
+/docker/.env
 
 # Ignore configuration files in media directory
-/media/docker-compose.yml
-/media/*.env
+/media/.env

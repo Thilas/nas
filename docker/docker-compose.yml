@@ -6,11 +6,12 @@ services:
     image: ghcr.io/linuxserver/heimdall
     container_name: heimdall
     hostname: heimdall
-    env_file:
-      - tz.env
-      - ids.env
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
     volumes:
-      - %HOME%/.docker/heimdall:/config
+      - $CONFIG/heimdall:/config
     ports:
       - 9080:80
       - 9443:443
@@ -26,7 +27,7 @@ services:
       - 9000:9000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - %HOME%/.docker/portainer:/data
+      - $CONFIG/portainer:/data
     restart: unless-stopped
 
   sslh:
@@ -35,6 +36,6 @@ services:
     container_name: sslh
     hostname: sslh
     network_mode: host
-    env_file:
-      - sslh.env
+    environment:
+      - SSLH_OPTS=-p 0.0.0.0:$SSLH_PORT --ssh $SSLH_SSH_HOST:$SSLH_SSH_PORT --tls $SSLH_HTTPS_HOST:$SSLH_HTTPS_PORT
     restart: unless-stopped

@@ -1,43 +1,13 @@
 #!/bin/sh
 
-cd "$(dirname "$(readlink -f "$0")")"
-. ~/.bin/misc/throw
+cd "$(realpath "$0" | xargs dirname)"
+../.bin/docker/configure "$PWD" || exit
 
-readValue() {
-	local prompt="$1" default="$2" variable="$3" pattern="${4:-.+}"
-	[ -f sslh.env ] && current="$(grep "^# $prompt: " sslh.env | cut -d' ' -f4)" || current=
-	read -p "$prompt: " -i "${current:-$default}" -e $variable
-	value="$(echo "${!variable}" | egrep "^$pattern$")"
-	[ -z "$value" ] && throw "Invalid value: \"${!variable}\""
-}
-portPattern='[1-9][0-9]{0,4}'
+. ./.env
 
-readValue 'Listening port' 44322 listeningPort "$portPattern"
-readValue 'SSH host' 127.0.0.1 sshHost
-readValue 'SSH port' 22 sshPort "$portPattern"
-readValue 'HTTPS host' 127.0.0.1 httpsHost
-readValue 'HTTPS port' 443 httpsPort "$portPattern"
-
-. ~/.bin/docker/configure-ids
-. ~/.bin/docker/configure-tz
-
-echo
-echo 'Writing sslh.env...'
-echo "# Listening port: $listeningPort" > sslh.env
-echo "# SSH host: $sshHost" >> sslh.env
-echo "# SSH port: $sshPort" >> sslh.env
-echo "# HTTPS host: $httpsHost" >> sslh.env
-echo "# HTTPS port: $httpsPort" >> sslh.env
-echo >> sslh.env
-echo "SSLH_OPTS=-p 0.0.0.0:$listeningPort --ssh $sshHost:$sshPort --tls $httpsHost:$httpsPort" >> sslh.env
-
-. ~/.bin/docker/configure
-
-echo
 echo 'Creating missing directories...'
 for directory in portainer heimdall; do
-	sudo -u "$user" -- mkdir -p "$homePath/.docker/$directory"
+	sudo -u "#$PUID" -- mkdir -p "$CONFIG/$directory"
 done
 
-echo
 echo 'Containers configured successfully'

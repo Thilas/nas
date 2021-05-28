@@ -1,0 +1,118 @@
+version: "2.4"
+services:
+
+  plex:
+    # https://hub.docker.com/r/plexinc/pms-docker
+    image: plexinc/pms-docker:plexpass
+    container_name: plex
+    hostname: plex
+    depends_on:
+      - plex-betaseries-webhook
+    network_mode: host
+    mem_limit: $PLEX_MEM_LIMIT
+    devices:
+      - /dev/dri:/dev/dri
+    environment:
+      - TZ=$TZ
+      - PLEX_UID=$PUID
+      - PLEX_GID=$PGID
+      - PLEX_CLAIM=$PLEX_CLAIM
+      - ADVERTISE_IP=$PLEX_ADVERTISE_IP
+      - ALLOWED_NETWORKS=$PLEX_ALLOWED_NETWORKS
+    volumes:
+      - $CONFIG/plex:/config
+      - $DATA/movies:/data/movies
+      - $DATA/music:/data/music
+      - $DATA/tvshows:/data/tvshows
+    restart: unless-stopped
+
+  plex-betaseries-webhook:
+    # https://hub.docker.com/r/thilas/plex-betaseries-webhook
+    image: thilas/plex-betaseries-webhook
+    container_name: plex-betaseries-webhook
+    hostname: plex-betaseries-webhook
+    environment:
+      - SERVER_URL=$WEBHOOK_SERVER_URL
+      - BETASERIES_CLIENTID=$BETASERIES_CLIENTID
+      - BETASERIES_CLIENTSECRET=$BETASERIES_CLIENTSECRET
+    ports:
+      - 12000:12000
+    restart: unless-stopped
+
+  tautulli:
+    # https://hub.docker.com/r/tautulli/tautulli
+    image: tautulli/tautulli
+    container_name: tautulli
+    hostname: tautulli
+    depends_on:
+      - plex
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+    ports:
+      - 8181:8181
+    volumes:
+      - $CONFIG/tautulli:/config
+      - $CONFIG/plex/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+    restart: unless-stopped
+
+  medusa:
+    # https://hub.docker.com/r/linuxserver/medusa
+    build: ./medusa
+    image: linuxserver/medusa:latest-thilas
+    container_name: medusa
+    hostname: medusa
+    depends_on:
+      - plex
+    mem_limit: $MEDUSA_MEM_LIMIT
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+    ports:
+      - 8081:8081
+    volumes:
+      - $CONFIG/medusa:/config
+      - $DATA/downloads/tvshows:/downloads
+      - $DATA/tvshows:/tv
+    restart: unless-stopped
+
+  radarr:
+    # https://hub.docker.com/r/linuxserver/radarr
+    image: linuxserver/radarr
+    container_name: radarr
+    hostname: radarr
+    depends_on:
+      - plex
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+    ports:
+      - 7878:7878
+    volumes:
+      - $CONFIG/radarr:/config
+      - $DATA/downloads/movies:/downloads
+      - $DATA/movies:/movies
+    restart: unless-stopped
+
+  komga:
+    # https://hub.docker.com/r/gotson/komga
+    image: gotson/komga
+    container_name: komga
+    hostname: komga
+    user: $PUID:$PGID
+    environment:
+      - TZ=$TZ
+      - JAVA_TOOL_OPTIONS=$KOMGA_JAVA_TOOL_OPTIONS
+      - KOMGA_REMEMBERME_KEY=$KOMGA_REMEMBERME_KEY
+      - KOMGA_REMEMBERME_VALIDITY=$KOMGA_REMEMBERME_VALIDITY
+    ports:
+      - 8080:8080
+    volumes:
+      - $CONFIG/komga:/config
+      - $DATA/books:/books
+      - $DATA/comics:/comics
+      - $KOMGA_EXTRA_VOLUME
+    restart: unless-stopped

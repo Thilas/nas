@@ -1,7 +1,7 @@
 #!/bin/sh
 name="$1" service="$2"
 
-cd "$(dirname "$(readlink -f "$0")")"
+cd "$(realpath "$0" | xargs dirname)"
 . misc/throw
 
 [ -z "$name" ] && throw 'name expected'
