@@ -80,7 +80,7 @@ services:
 
   radarr:
     # https://hub.docker.com/r/linuxserver/radarr
-    image: linuxserver/radarr
+    image: ghcr.io/linuxserver/radarr
     container_name: radarr
     hostname: radarr
     depends_on:
