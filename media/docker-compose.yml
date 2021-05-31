@@ -97,6 +97,25 @@ services:
       - $DATA/movies:/movies
     restart: unless-stopped
 
+  bazarr:
+    # https://hub.docker.com/r/linuxserver/bazarr
+    image: ghcr.io/linuxserver/bazarr
+    container_name: bazarr
+    hostname: bazarr
+    depends_on:
+      - radarr
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+    ports:
+      - 6767:6767
+    volumes:
+      - $CONFIG/bazarr:/config
+      - $DATA/movies:/movies
+      # - $DATA/tvshows:/tv
+    restart: unless-stopped
+
   komga:
     # https://hub.docker.com/r/gotson/komga
     image: gotson/komga
