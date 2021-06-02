@@ -17,15 +17,15 @@ throw() {
 }
 
 MEDIAHOME="$(realpath "$0" | xargs dirname)/.."
-MEDIAPATH="$MEDIAHOME/media/ids.env"
-[ -f "$MEDIAPATH" ] && MEDIAUSER="$(grep '^# User: ' "$MEDIAPATH" | cut -d' ' -f3)"
+MEDIAPATH="$MEDIAHOME/media/.env"
+[ -f "$MEDIAPATH" ] && MEDIAUSER="$(grep '^PUID=' "$MEDIAPATH" | cut -d'=' -f2)" || MEDIAUSER=
 [ -z "$MEDIAUSER" ] && throw 'Run ~/media/configure first'
 LOG="$MEDIAHOME/.log/tvshows.log"
 CACHE="$MEDIAHOME/.cache/tvshows"
 EXTENSIONS='\.(mkv|avi|divx|xvid|mov|wmv|mp4|mpg|mpeg|vob|iso|m4v|ts)'
 DEBUGTVSHOWS=10
 
-alias mediado="sudo -u '$MEDIAUSER'"
+alias mediado="sudo -u '#$MEDIAUSER'"
 
 mediado mkdir -p "$MEDIAHOME/.log"
 mediado touch "$LOG"
