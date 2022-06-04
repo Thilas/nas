@@ -59,8 +59,9 @@ services:
 
   medusa:
     # https://hub.docker.com/r/linuxserver/medusa
-    build: ./medusa
-    image: linuxserver/medusa:latest-thilas
+    # build: ./medusa
+    # image: linuxserver/medusa:latest-thilas
+    image: linuxserver/medusa
     container_name: medusa
     hostname: medusa
     depends_on:
