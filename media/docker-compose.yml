@@ -60,7 +60,7 @@ services:
   medusa:
     # https://hub.docker.com/r/linuxserver/medusa
     # build: ./medusa
-    # image: linuxserver/medusa:latest-thilas
+    # image: medusa
     image: linuxserver/medusa
     container_name: medusa
     hostname: medusa

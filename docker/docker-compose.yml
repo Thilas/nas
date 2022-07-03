@@ -31,11 +31,11 @@ services:
     restart: unless-stopped
 
   sslh:
-    # https://hub.docker.com/r/riftbit/sslh
-    image: riftbit/sslh
+    # https://github.com/yrutschle/sslh
+    build: ./sslh
+    image: sslh
     container_name: sslh
     hostname: sslh
     network_mode: host
-    environment:
-      - SSLH_OPTS=-p 0.0.0.0:$SSLH_PORT --ssh $SSLH_SSH_HOST:$SSLH_SSH_PORT --tls $SSLH_HTTPS_HOST:$SSLH_HTTPS_PORT
+    command: --listen $SSLH_HOST:$SSLH_PORT --ssh $SSLH_SSH_HOST:$SSLH_SSH_PORT --tls $SSLH_HTTPS_HOST:$SSLH_HTTPS_PORT -v
     restart: unless-stopped
