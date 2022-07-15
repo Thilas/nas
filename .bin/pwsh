@@ -1,0 +1,9 @@
+#!/bin/sh
+args="$@"
+# e.g. -Debug -WhatIf
+
+sudo docker run -it --rm \
+  -e POWERSHELL_TELEMETRY_OPTOUT=1 \
+  -v "/:/mnt/nas" \
+  mcr.microsoft.com/powershell \
+  pwsh $args
