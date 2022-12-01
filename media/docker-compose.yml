@@ -24,6 +24,7 @@ services:
       - $DATA/movies:/data/movies
       - $DATA/music:/data/music
       - $DATA/tvshows:/data/tvshows
+      - /tmp:/transcode
     restart: unless-stopped
 
   plex-betaseries-webhook:
