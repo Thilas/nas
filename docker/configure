@@ -6,7 +6,7 @@ cd "$(realpath "$0" | xargs dirname)"
 . ./.env
 
 echo 'Creating missing directories...'
-for directory in portainer heimdall; do
+for directory in portainer heimdall wireguard; do
 	sudo -u "#$PUID" -- mkdir -p "$CONFIG/$directory"
 done
 

@@ -1,0 +1,16 @@
+#!/bin/sh
+output="$1"
+
+pushd "$(realpath "$0" | xargs dirname)" > /dev/null
+. misc/throw
+popd > /dev/null
+
+[ -z "$output" ] && throw 'output expected'
+output="$(realpath "$output")"
+[ -d "$output" ] || throw "$output: directory not found"
+
+[ -f "/proc/syno_platform" ] || throw "/proc/syno_platform: file not found"
+platform="$(cat /proc/syno_platform | tr '[:upper:]' '[:lower:]')"
+
+echo "Building Wireguard module for $platform into $output"
+sudo docker run --rm --privileged --env "PACKAGE_ARCH=$platform" --env DSM_VER=6.2 -v "$output:/result_spk" blackvoidclub/synobuild62
