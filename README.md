@@ -15,6 +15,7 @@ This repository contains a bunch of scripts to help configure, maintain and oper
 - Install [Heimdall](https://github.com/linuxserver/Heimdall) ([docker](https://hub.docker.com/r/linuxserver/heimdall), [service](http://nassau:9080/)), an application dashboard and launcher
 - Install [Portainer](https://github.com/portainer/portainer) ([docker](https://hub.docker.com/r/portainer/portainer-ce), [service](http://nassau:9000/)), a lightweight management UI which allows to easily manage your different Docker environments
 - Install [SSLH](https://github.com/yrutschle/sslh) ([docker](https://hub.docker.com/r/oorabona/sslh), [service](https://nassau:44322/)), an applicative protocol multiplexer
+- Install [Wireguard](https://www.wireguard.com/) ([docker](https://hub.docker.com/r/linuxserver/wireguard)), an extremely simple yet fast and modern VPN
 - Install [Plex](https://www.plex.tv/) ([docker](https://hub.docker.com/r/plexinc/pms-docker), [service](http://nassau:32400/), [web](https://app.plex.tv/)), brings together all the media that matters to you
 - Install [Plex Webhook for BetaSeries](https://github.com/Thilas/plex-betaseries-webhook) ([docker](https://hub.docker.com/r/thilas/plex-betaseries-webhook), [service](http://nassau:12000/)), a Plex webhook to mark series and movies as watched on BetaSeries
 - Install [Tautulli](https://github.com/Tautulli/Tautulli) ([docker](https://hub.docker.com/r/tautulli/tautulli), [service](http://nassau:8181/)), a Python based monitoring and tracking tool for Plex Media Server
@@ -24,6 +25,10 @@ This repository contains a bunch of scripts to help configure, maintain and oper
 - Install [Komga](https://github.com/gotson/komga) ([docker](https://hub.docker.com/r/gotson/komga), [service](http://nassau:8080/)), a media server for comics/mangas/BDs with API and OPDS support
 
 ## Scripts
+
+### `build-wireguard`
+
+`build-wireguard` aims at building a valid SPK package that provides an up-to-date wireguard module to the nas. Complete instructions: [Wireguard SPK for your Synology NAS](https://www.blackvoid.club/wireguard-spk-for-your-synology-nas/).
 
 ### `configure`
 
@@ -62,6 +67,7 @@ This `media` directory is customizable (thanks to the `configure` script) but it
 
 - [Install on Synology NAS](https://github.com/Entware/Entware-ng/wiki/Install-on-Synology-NAS)
 - [SSH Key Authentication](https://help.ubuntu.com/community/SSH/OpenSSH/Keys)
+- [WireGuard support for Synology NAS](https://github.com/runfalk/synology-wireguard)
 - [How to Control Synology DSM Services via Terminal / SSH](https://tech.setepontos.com/2018/03/25/control-synology-dsm-services-via-terminal-ssh/)
 - [Plex on Docker on Synology: enabling Hardware Transcoding](https://medium.com/@MrNick4B/plex-on-docker-on-synology-enabling-hardware-transcoding-fa017190cad7)
 - [SRT subtitles on Chromecast constistently disappear a few minutes before the movie end](https://forums.plex.tv/t/srt-subtitles-on-chromecast-constistently-disappear-a-few-minutes-before-the-movie-end/510491/36)
