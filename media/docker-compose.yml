@@ -130,7 +130,7 @@ services:
       - KOMGA_REMEMBERME_KEY=$KOMGA_REMEMBERME_KEY
       - KOMGA_REMEMBERME_VALIDITY=$KOMGA_REMEMBERME_VALIDITY
     ports:
-      - 8080:8080
+      - 25600:25600
     volumes:
       - $CONFIG/komga:/config
       - $DATA/books:/books
