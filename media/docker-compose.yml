@@ -82,7 +82,7 @@ services:
 
   radarr:
     # https://hub.docker.com/r/linuxserver/radarr
-    image: ghcr.io/linuxserver/radarr
+    image: linuxserver/radarr
     container_name: radarr
     hostname: radarr
     depends_on:
@@ -99,13 +99,33 @@ services:
       - $DATA/movies:/movies
     restart: unless-stopped
 
+  sonarr:
+    # https://hub.docker.com/r/linuxserver/sonarr
+    image: linuxserver/sonarr
+    container_name: sonarr
+    hostname: sonarr
+    depends_on:
+      - plex
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+    ports:
+      - 8989:8989
+    volumes:
+      - $CONFIG/sonarr:/config
+      - $DATA/downloads/tvshows:/downloads
+      - $DATA/tvshows:/tv
+    restart: unless-stopped
+
   bazarr:
     # https://hub.docker.com/r/linuxserver/bazarr
-    image: ghcr.io/linuxserver/bazarr
+    image: linuxserver/bazarr
     container_name: bazarr
     hostname: bazarr
     depends_on:
       - radarr
+      - sonarr
     environment:
       - TZ=$TZ
       - PUID=$PUID
@@ -115,7 +135,7 @@ services:
     volumes:
       - $CONFIG/bazarr:/config
       - $DATA/movies:/movies
-      # - $DATA/tvshows:/tv
+      - $DATA/tvshows:/tv
     restart: unless-stopped
 
   komga:
@@ -127,8 +147,6 @@ services:
     environment:
       - TZ=$TZ
       - JAVA_TOOL_OPTIONS=$KOMGA_JAVA_TOOL_OPTIONS
-      - KOMGA_REMEMBERME_KEY=$KOMGA_REMEMBERME_KEY
-      - KOMGA_REMEMBERME_VALIDITY=$KOMGA_REMEMBERME_VALIDITY
     ports:
       - 25600:25600
     volumes:
@@ -136,4 +154,29 @@ services:
       - $DATA/books:/books
       - $DATA/comics:/comics
       - $KOMGA_EXTRA_VOLUME
+    restart: unless-stopped
+
+  jellyfin:
+    # https://hub.docker.com/r/jellyfin/jellyfin/
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    hostname: jellyfin
+    user: $PUID:$PGID
+    network_mode: host
+    mem_limit: $PLEX_MEM_LIMIT
+    devices:
+      - /dev/dri:/dev/dri
+    environment:
+      - JELLYFIN_PublishedServerUrl=$JELLYFIN_PUBLISHED_SERVER_URL
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - $CONFIG/jellyfin:/config
+      - $CONFIG/jellyfin-cache:/cache
+      - $DATA/books:/media/books
+      - $DATA/comics:/media/comics
+      - $DATA/movies:/media/movies
+      - $DATA/music:/media/music
+      - $DATA/tvshows:/media/tvshows
+      - /tmp:/transcode
     restart: unless-stopped

@@ -77,4 +77,6 @@ execute 'Upgrading bash docker completion' "$HOME/.bin/misc/upgrade-docker-compl
 execute 'Upgrading docker containers' 'docker-upgrade docker'
 execute 'Upgrading media containers' 'docker-upgrade media'
 execute 'Restarting plex container' 'docker restart plex'
+execute 'Pruning docker build cache' 'docker builder prune --all --force'
 execute 'Pruning docker images' 'docker image prune --all --force'
+execute 'Pruning docker volumes' 'docker volume prune --force'

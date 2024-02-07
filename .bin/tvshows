@@ -71,7 +71,7 @@ show 'Latest downloaded tv show:' "$LATEST"
 # Downloads any new tv shows
 log
 show 'Downloading new tv shows...'
-mediado ssh "$SERVER" "find \"$SOURCE\" -type f -newer \"$SOURCE/$LATEST\" -printf '%P\\n' | egrep \"^($TVSHOWS)/.+$EXTENSIONS$\"" \
+mediado ssh "$SERVER" "find \"$SOURCE\" -type f -newer \"$SOURCE/$LATEST\" -printf '%P\\n' | egrep \"^($TVSHOWS)/.+$EXTENSIONS$\" | sort" \
 	| mediado rsync -hrtv -e ssh --files-from=- --stats --progress "$SERVER:$SOURCE/" "$DESTINATION/" 2>&1 | tee -a "$LOG"
 
 # Display latest downloaded tv shows
