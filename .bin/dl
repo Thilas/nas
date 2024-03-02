@@ -1,0 +1,65 @@
+#!/bin/sh
+
+log() {
+	local messages="$@"
+	[ -n "$LOG" ] && echo "$messages" | tee -a "$LOG" || echo "$messages"
+}
+
+show() {
+	local title="$1" && shift && local messages="$@"
+	[ -n "$LOG" ] && echo -e "\e[35m$title\e[39m" "$messages" | tee -a "$LOG" || echo "$title" "$messages"
+}
+
+throw() {
+	local message="$1"
+	[ -n "$LOG" ] && echo -e "\e[31m$message\e[39m" | tee -a "$LOG" >&2 || echo "$message" >&2
+	exit 1
+}
+
+MEDIAHOME="$(realpath "$0" | xargs dirname)/.."
+MEDIAPATH="$MEDIAHOME/media/.env"
+[ -f "$MEDIAPATH" ] && MEDIAUSER="$(grep '^PUID=' "$MEDIAPATH" | cut -d'=' -f2)" || MEDIAUSER=
+[ -z "$MEDIAUSER" ] && throw 'Run ~/media/configure first'
+LOG="$MEDIAHOME/.log/tvshows.log"
+
+PATTERN="$1"
+[ "$2" == "-d" ] && MODE=download
+
+alias mediado="sudo -u '#$MEDIAUSER'"
+
+mediado mkdir -p "$MEDIAHOME/.log"
+mediado touch "$LOG"
+echo -e "*** $(date) Start ***\n" >> "$LOG"
+
+end() {
+	echo -e "\n*** $(date) End ***\n" >> "$LOG"
+}
+trap end EXIT
+
+# Load & check tv shows configuration
+[ -f "$MEDIAHOME/.tvshows" ] || mediado cp "$MEDIAHOME/media/.tvshows.template" "$MEDIAHOME/.tvshows"
+. "$MEDIAHOME/.tvshows"
+if [ -z "$SERVER" ] || [ -z "$DL_SOURCE" ] || [ -z "$DL_DESTINATION" ] || [ -z "$TVSHOWS" ]; then
+	throw '~/.tvshows is not properly configured'
+fi
+mediado ssh -o PasswordAuthentication=no "$SERVER" 'true'
+[ $? -eq 0 ] || throw "$SERVER: password is required"
+mediado ssh "$SERVER" "[ -d \"$DL_SOURCE\" ]" || throw "$SERVER:$DL_SOURCE: source path does not exist"
+[ -d "$DL_DESTINATION" ] || throw "$DL_DESTINATION: destination path does not exist"
+
+if [ "$MODE" == "download" ]; then
+	# Downloads requested files
+	show 'Downloading files...'
+	mediado ssh "$SERVER" "find \"$DL_SOURCE\" -type f -printf '%P\\n' | egrep \"^($PATTERN)$\" | sort" \
+		| mediado rsync -hrtv -e ssh --files-from=- --stats --progress "$SERVER:$DL_SOURCE/" "$DL_DESTINATION/" 2>&1 | tee -a "$LOG"
+
+	# Set permissions of downloaded tv shows
+	log
+	show 'Setting permissions of downloaded tv shows...'
+	sudo true || throw 'Permission denied'
+	sudo find "$DL_DESTINATION" -exec synoacltool -enforce-inherit "{}" \;
+else
+	# Listing files
+	show 'Listing files...'
+	mediado ssh "$SERVER" "find \"$DL_SOURCE\" -type f -printf '%P\\n' | egrep \"^($PATTERN)$\" | sort" 2>&1 | tee -a "$LOG"
+fi

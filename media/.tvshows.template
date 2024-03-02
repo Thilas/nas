@@ -6,7 +6,12 @@ SOURCE=/path/to/tvshows
 # Path to downloaded tv shows on current server
 DESTINATION=/volume1/media/downloads/tvshows
 # Pipe-separated & regex-escaped list of TV shows to downloads (e.g. "Doctor Who \(2005\)|Game of Thrones")
-WANTED=
+TVSHOWS=
+
+# Path to downloads on remote server
+DL_SOURCE=/path/to/tvshows
+# Path to downloads on current server
+DL_DESTINATION=/volume1/media/downloads
 
 # Medusa settings
 MEDUSA_HOST=localhost
