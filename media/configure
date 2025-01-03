@@ -6,7 +6,7 @@ cd "$(realpath "$0" | xargs dirname)"
 . ./.env
 
 echo 'Creating missing directories...'
-for directory in plex medusa radarr sonarr bazarr tautulli komga jellyfin jellyfin-cache; do
+for directory in plex medusa radarr sonarr bazarr tautulli komga; do
 	sudo -u "#$PUID" -- mkdir -p "$CONFIG/$directory"
 done
 for directory in books comics downloads/movies downloads/tvshows movies music tvshows; do

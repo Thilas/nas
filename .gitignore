@@ -3,8 +3,6 @@
 !/.bin/
 /home/
 
-# Ignore configuration files in docker directory
-/docker/.env
+# Ignore configuration files
+.env
 
-# Ignore configuration files in media directory
-/media/.env
