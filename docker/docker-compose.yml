@@ -1,20 +1,16 @@
 version: "2.4"
 services:
 
-  heimdall:
-    # https://hub.docker.com/r/linuxserver/heimdall
-    image: linuxserver/heimdall
-    container_name: heimdall
-    hostname: heimdall
-    environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+  homepage:
+    # https://github.com/gethomepage/homepage/pkgs/container/homepage
+    image: ghcr.io/gethomepage/homepage
+    container_name: homepage
+    hostname: homepage
     ports:
-      - 9080:80
-      - 9443:443
+      - 3000:3000
     volumes:
-      - $CONFIG/heimdall:/config
+      - /var/run/docker.sock:/var/run/docker.sock # For docker integrations
+      - $CONFIG/homepage:/app/config # Make sure your local config directory exists
     restart: unless-stopped
 
   portainer:
