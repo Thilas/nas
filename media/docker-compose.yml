@@ -34,6 +34,7 @@ services:
     hostname: plex-betaseries-webhook
     environment:
       - SERVER_URL=$WEBHOOK_SERVER_URL
+      - PLEX_ACCOUNT=$PLEX_ACCOUNT
       - BETASERIES_CLIENTID=$BETASERIES_CLIENTID
       - BETASERIES_CLIENTSECRET=$BETASERIES_CLIENTSECRET
     ports:
